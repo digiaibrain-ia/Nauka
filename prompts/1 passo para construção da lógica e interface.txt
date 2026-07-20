@@ -1,0 +1,84 @@
+Olá, Claude. Estou a desenvolver uma aplicação web de preparação, simulação e monitorização de desempenho para vestibulandos. Eu não sei programar, pelo que conto com o teu apoio passo a passo para construir a arquitetura, o código e a interface do projeto, garantindo que me explicas detalhadamente onde criar ou colar cada ficheiro.
+
+O objetivo da aplicação é substituir folhas de cálculo complexas por um painel interativo (Hub) onde o estudante faz a gestão de múltiplos vestibulares através de "Abas de Painéis". Atualmente, focaremos 100% no vestibular piloto: UNESP.
+
+Na pasta pai deste projeto (pasta 'estudo'), há um arquivo PDF chamado 'unesp-nota-de-corte-2026.pdf'. Este documento contém as notas de corte oficiais da 1ª fase (divididas pelas colunas 'SU' para Ampla Concorrência, e 'SRVEBP' / 'ESRVEBP+PPI' para o sistema de cotas).
+
+Cria a estrutura inicial do projeto seguindo rigorosamente os requisitos técnicos, visuais e de cálculo abaixo:
+
+---
+
+### 1. DIRETRIZES VISUAIS (DESIGN & PALETA DE CORES)
+O design deve ser limpo, minimalista, moderno e altamente focado na legibilidade, utilizando a seguinte paleta de cores:
+- **Fundo da Aplicação (Background):** Off-White / Cinza Claro Pastel (para evitar a fadiga visual).
+- **Textos, Menus e Cabeçalhos:** Azul Marinho Escuro (substituindo o preto tradicional para dar um aspeto premium).
+- **Cards e Tabelas:** Fundo Branco Puro com bordas finas e discretas em cinza claro.
+- **Botões de Ação Principais:** Azul Royal / Azul Elétrico com texto em branco (para alto contraste).
+- **Indicadores de Sucesso (Status Positivo):** Verde Suave / Pastel para o símbolo "✔ Dentro da Meta" e para a linha de progresso quando acima do esperado.
+- **Indicadores de Alerta (Status de Referência):** Vermelho Coral / Terracota (tom em formato fosco, não agressivo) para a "Linha de Meta" no gráfico e para o símbolo "✘ Abaixo da Meta".
+
+---
+
+### 2. FLUXO DE ENTRADA (ONBOARDING)
+- **Tela de Entrada:** Apresentar de forma centralizada e elegante a frase principal do método:
+  "Monitore seus acertos, corrija seus erros e domine o formato da prova."
+- **Cadastro Simplificado:** Campos de Nome, E-mail e Senha para o login contínuo (os dados do utilizador devem ser guardados numa base de dados para uso contínuo e salvamento automático).
+- **Página de Perfil:** Uma secção isolada onde o aluno pode editar os seus dados de login e adicionar notas ou observações pessoais em texto livre, sem interferir nas regras de cálculo do sistema.
+
+---
+
+### 3. SISTEMA DE MÚLTIPLOS PAINÉIS (AS ABAS DINÂMICAS)
+- A navegação principal no topo da Dashboard deve ser feita por abas. Exemplo visual: `[ UNESP - Direito ]` `[ + ]`.
+- Ao clicar no botão `[ + ]`, abre-se um formulário limpo para configurar um novo Painel de Foco:
+  1. **Seleção da Faculdade:** Menu fixo onde apenas 'UNESP' está disponível nesta fase (outras opções como FUVEST, UNICAMP e ENEM devem aparecer cinzentas/desabilitadas com o aviso "Em breve").
+  2. **Seleção do Curso (Busca Inteligente):** Um campo de texto com "Autocomplete". À medida que o aluno digita (ex: "Dire"), o sistema filtra automaticamente os cursos correspondentes extraídos do PDF de notas de corte. Não permitir digitação livre para evitar erros de associação.
+  3. **Seleção do Campus:** Se o curso selecionado existir em mais do que uma cidade, exibir um seletor dinâmico com as opções de Campus (Ex: Bauru ou Assis).
+  4. **Modalidade de Concorrência:** Um seletor simples entre `[ Ampla Concorrência (SU) ]` ou `[ Cotas / Reserva de Vagas (SRVEBP) ]`.
+- Ao guardar, o sistema gera uma nova aba isolada no topo. Cada aba guarda o seu próprio histórico de simulados e as suas próprias metas de forma independente.
+
+---
+
+### 4. INTERFACE UNIFICADA DO PAINEL (TUDO EM UMA TELA)
+Quando uma aba de estudos estiver ativa, a aplicação deve renderizar uma página unificada dividida em três blocos integrados:
+
+#### Bloco A: Os Cards de Metas Alvo (No Topo da Página)
+O sistema consulta o banco de dados (gerado a partir do PDF) e exibe três cartões com as metas exatas para o Curso, Campus e Cota selecionados:
+- **Card 1 (Objetiva):** Meta da 1ª Fase (Valor dinâmico extraído do PDF).
+- **Card 2 (Redação):** Meta da Redação (Valor fixo referencial da planilha original: 24 pontos).
+- **Card 3 (Alvo Final):** Meta de Média Final (Valor fixo referencial da planilha original: 50 pontos).
+
+#### Bloco B: Tabela de Lançamento e Histórico Dinâmico (Coluna da Esquerda)
+Em vez de ecrãs separados, o histórico e o lançamento de novos dados acontecem na mesma tabela. A última linha da tabela está sempre em branco, funcionando como os campos de input de preenchimento:
+- **Campos de Inserção na Linha:**
+  - Título do Simulado (Texto livre inserido pelo aluno. Ex: "Simulado Anglo UNESP 1").
+  - Acertos na 1ª Fase (Número de 0 a 90).
+  - Notas da 2ª Fase: Ciências Humanas (0 a 24), Ciências da Natureza e Matemática (0 a 24), Linguagens (0 a 24) e Redação (0 a 28).
+  - Erros Pontuais de Redação (Campo de texto longo para diagnóstico).
+  - Observações Gerais (Campo de texto longo).
+- **Botão [ Adicionar ]:** No fim da linha. Ao clicar, os dados são validados, guardados na base de dados, a linha fixa-se no histórico e o gráfico ao lado atualiza-se imediatamente.
+
+#### Bloco C: Gráfico de Evolução em Tempo Real (Coluna da Direita)
+Um gráfico de linhas interativo posicionado ao lado da tabela:
+- **Eixo X:** Título dos Simulados digitados livremente pelo aluno.
+- **Eixo Y:** Pontuação na escala de 0 a 100.
+- **Linha Horizontal Vermelha Coral (Estática):** Trava na altura da Meta de Média Final Alvo (50).
+- **Linha Azul Royal (Dinâmica):** Liga os pontos da Média Final obtida pelo aluno em cada simulado. Atualiza-se instantaneamente quando uma nova linha é adicionada na tabela da esquerda.
+
+---
+
+### 5. MOTOR DE CÁLCULO (REGRAS OFICIAIS DA FOLHA DE CÁLCULO ORIGINAL)
+Os cálculos de desempenho devem seguir rigorosamente os critérios já validados na folha de cálculo original:
+1. **Nota da 1ª Fase:** `(Acertos × 100) ÷ 90` -> Convertido para a escala de 0 a 100 pontos.
+2. **Nota da 2ª Fase:** Soma simples das 4 áreas de competência -> `Humanas + Nat/Mat + Linguagens + Redação` (Máximo de 100 pontos).
+3. **Média Final do Simulado:** `(Nota 1ª Fase + Nota 2ª Fase) ÷ 2` -> Média simples entre as duas fases (Escala de 0 a 100 pontos).
+4. **Situação:** Se a Média Final for igual ou superior à Meta Média Final Alvo (50), o status exibe "✔ Dentro da Meta" (em verde suave). Se for inferior, exibe "✘ Abaixo da Meta" (em vermelho coral).
+
+---
+
+### PASSO IMEDIATO A EXECUTAR:
+Claude, para começarmos o projeto de forma organizada e sem erros de digitação:
+1. Utiliza as tuas ferramentas de código para ler e extrair os dados de cursos, campi e notas de corte do arquivo 'unesp-nota-de-corte-2026.pdf' localizado na pasta pai 'estudo'.
+2. Organiza essa informação num formato estruturado de base de dados (como um ficheiro JSON ou base de dados local) mapeando corretamente as colunas SU e SRVEBP.
+3. Apresenta-me um resumo de como ficou a estrutura de dados de um curso exemplo (ex: Direito) para eu validar e, logo a seguir, indica-me qual o primeiro ficheiro de código que vamos criar para a interface do site.
+
+Como deves proceder?

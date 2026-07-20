@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nauka — Landing (prévia de redesign)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     PRÉVIA — não é usada pelo site (index.html/app.js intactos).
+     Paleta 100% derivada de styles.css do próprio site:
+       --navy #0d1b2a · --royal #1b4965 · hover #235d80 · teal #62b6cb
+     Se aprovado, este bloco substitui a seção NAUKA LANDING PAGE
+     em styles.css e a função renderLanding() em app.js.
+     ============================================================ */
+  :root {
+    --navy:      #0d1b2a;   /* fundo — mesmo do app/onboarding */
+    --panel:     #1b263b;   /* cards (mesmo tom da landing atual) */
+    --panel-2:   #14243a;   /* variação levemente mais escura */
+    --line:      rgba(255,255,255,.07);
+    --line-teal: rgba(98,182,203,.30);
+    --teal:      #62b6cb;   /* accent oficial do site */
+    --teal-dim:  rgba(98,182,203,.14);
+    --royal:     #1b4965;   /* botão de ação principal */
+    --royal-dark:#235d80;   /* hover */
+    --t-fff:     #ffffff;
+    --t-1:       #dce6f0;   /* texto claro */
+    --t-2:       #c7d1dd;   /* corpo de texto */
+    --t-3:       #96a3b6;   /* secundário */
+    --font-display: 'Space Grotesk', var(--font-body);
+    --font-body:    'Plus Jakarta Sans', system-ui, -apple-system, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin:0; padding:0; }
+  body {
+    background: var(--navy);
+    color: var(--t-1);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+  }
+  a { color: inherit; }
+  .note {
+    position: sticky; top: 0; z-index: 20;
+    background: var(--teal); color: #06222b;
+    font-size: 12.5px; font-weight: 700;
+    text-align: center; padding: 8px 14px; letter-spacing: .2px;
+  }
+
+  .landing-page {
+    min-height: 100vh;
+    padding: 32px clamp(20px, 5vw, 72px) 88px;
+    max-width: 1120px; margin: 0 auto;
+  }
+
+  /* ---------- Header ---------- */
+  .l-header {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    flex-wrap: wrap; gap: 16px; margin-bottom: 20px;
+    border-bottom: 1px solid var(--line); padding-bottom: 22px;
+  }
+  .l-brand-name {
+    font-family: var(--font-display); font-size: 22px; font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase; color: #fff;
+  }
+  .l-brand-sub { font-size: 12.5px; color: var(--teal); font-weight: 600; margin-top: 4px; letter-spacing: .3px; }
+  .l-nav { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .l-nav a {
+    text-decoration: none; font-size: 11.5px; font-weight: 700;
+    letter-spacing: .6px; text-transform: uppercase; color: var(--t-2);
+    padding: 10px 16px; border-radius: 10px; background: var(--panel);
+    border: 1px solid var(--line); transition: background .15s, transform .1s, border-color .15s, color .15s;
+  }
+  .l-nav a:hover { background: #24344d; transform: translateY(-1px); color: #fff; }
+  .l-nav a:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+
+  /* ---------- Hero (centrada, sem gráfico) ---------- */
+  .l-hero { max-width: 760px; margin: 0 auto; text-align: center; padding: 64px 0 40px; }
+  .l-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 11.5px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+    color: var(--teal); background: var(--teal-dim); border: 1px solid var(--line-teal);
+    padding: 7px 14px; border-radius: 999px; margin-bottom: 24px;
+  }
+  .l-title {
+    font-family: var(--font-display); font-weight: 700;
+    font-size: clamp(30px, 4vw, 46px); line-height: 1.2;
+    margin: 0 0 22px; color: #fff; letter-spacing: -.01em;
+  }
+  .l-title .hl { color: var(--teal); }
+  .l-sub { font-size: 16.5px; color: var(--t-3); line-height: 1.65; max-width: 560px; margin: 0 auto 34px; }
+  .l-cta {
+    background: var(--royal); color: #fff; border: none; cursor: pointer;
+    font-size: 14px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
+    padding: 16px 38px; border-radius: 12px;
+    box-shadow: 0 10px 26px rgba(27,73,101,.45);
+    transition: background .15s, transform .12s, box-shadow .15s;
+  }
+  .l-cta:hover { background: var(--royal-dark); transform: translateY(-2px); box-shadow: 0 14px 32px rgba(27,73,101,.5); }
+  .l-cta:active { transform: translateY(0); }
+  .l-cta:focus-visible { outline: 3px solid var(--teal); outline-offset: 3px; }
+  .l-cta-toast { display: block; margin-top: 14px; font-size: 12.5px; color: var(--t-3); opacity: 0; transition: opacity .2s; }
+  .l-cta-toast.show { opacity: 1; }
+
+  /* faixa de indicadores discreta sob a hero */
+  .l-hero-strip {
+    display: flex; justify-content: center; flex-wrap: wrap; gap: 12px 28px;
+    margin-top: 44px; padding-top: 26px; border-top: 1px solid var(--line);
+  }
+  .l-strip-item { display: flex; align-items: baseline; gap: 8px; }
+  .l-strip-num { font-family: var(--font-display); font-size: 22px; font-weight: 700; color: #fff; }
+  .l-strip-lbl { font-size: 12.5px; color: var(--t-3); }
+
+  /* ---------- Seções ---------- */
+  .l-section { margin-top: 84px; }
+  .l-section-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 26px; }
+  .l-section-num { font-size: 13px; color: var(--teal); font-weight: 800; letter-spacing: .5px; }
+  .l-section-title {
+    font-family: var(--font-display); font-size: 13px; font-weight: 700;
+    letter-spacing: 1.6px; text-transform: uppercase; color: var(--t-3);
+  }
+
+  /* ---- Vestibulares: linhas estilo cartão-resposta ---- */
+  .l-sheet { border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: var(--panel); }
+  .l-sheet-row {
+    display: grid; grid-template-columns: 34px 1fr auto; align-items: center;
+    gap: 16px; padding: 18px 22px; border-bottom: 1px solid var(--line);
+    transition: background .15s;
+  }
+  .l-sheet-row:last-child { border-bottom: none; }
+  .l-sheet-row.on:hover { background: #21304a; }
+  .l-bubble { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--t-3); position: relative; flex-shrink: 0; }
+  .l-bubble.filled { border-color: var(--teal); }
+  .l-bubble.filled::after { content: ""; position: absolute; inset: 3px; border-radius: 50%; background: var(--teal); }
+  .l-sheet-name { font-size: 15.5px; font-weight: 600; color: #fff; }
+  .l-sheet-sub { font-size: 12.5px; color: var(--t-3); margin-top: 3px; }
+  .l-status { font-size: 10.5px; font-weight: 800; letter-spacing: .6px; padding: 5px 11px; border-radius: 999px; white-space: nowrap; }
+  .l-status.ativo { background: var(--teal-dim); color: var(--teal); border: 1px solid var(--line-teal); }
+  .l-status.em-breve { background: rgba(150,163,182,.12); color: var(--t-3); border: 1px solid var(--line); }
+
+  /* ---- Propósito: manifesto ---- */
+  .l-manifesto { max-width: 880px; }
+  .l-manifesto-lead {
+    font-family: var(--font-display); font-weight: 600;
+    font-size: clamp(22px, 2.6vw, 30px); line-height: 1.4; color: #fff; margin: 0 0 20px;
+  }
+  .l-manifesto-lead em { color: var(--teal); font-style: normal; }
+  .l-manifesto p { font-size: 15px; color: var(--t-2); line-height: 1.75; max-width: 640px; margin: 0; }
+
+  /* ---- Como funciona: linha do tempo vertical ---- */
+  .l-timeline { position: relative; padding-left: 40px; max-width: 640px; }
+  .l-timeline::before { content: ""; position: absolute; left: 10px; top: 6px; bottom: 6px; width: 1px; background: var(--line); }
+  .l-step { position: relative; padding-bottom: 34px; }
+  .l-step:last-child { padding-bottom: 0; }
+  .l-step::before {
+    content: ""; position: absolute; left: -40px; top: 3px;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--navy); border: 2px solid var(--teal);
+  }
+  .l-step-fase { font-size: 11px; font-weight: 800; letter-spacing: .8px; color: var(--teal); margin-bottom: 6px; text-transform: uppercase; }
+  .l-step h3 { font-family: var(--font-display); font-size: 17px; font-weight: 600; color: #fff; margin: 0 0 6px; }
+  .l-step p { font-size: 14.5px; color: var(--t-2); line-height: 1.65; margin: 0; max-width: 520px; }
+
+  /* ---------- Telas largas: usa a largura disponível em vez de deixar sobra vazia ---------- */
+  @media (min-width: 901px) {
+    .landing-page { max-width: 1360px; }
+
+    .l-sheet { display: grid; grid-template-columns: 1fr 1fr; }
+    .l-sheet-row {
+      border-bottom: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+    }
+    .l-sheet-row:nth-child(2n) { border-right: none; }
+    .l-sheet-row:nth-last-child(-n+2) { border-bottom: none; }
+
+    .l-manifesto {
+      max-width: none;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start;
+    }
+    .l-manifesto-lead { margin: 0; }
+    .l-manifesto p { max-width: none; }
+
+    .l-timeline {
+      max-width: none; padding-left: 0;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px;
+    }
+    .l-timeline::before { left: 0; right: 0; top: 10px; bottom: auto; height: 1px; width: auto; }
+    .l-step { padding-bottom: 0; padding-top: 40px; }
+    .l-step::before { left: 0; top: -1px; }
+    .l-step p { max-width: none; }
+  }
+  @media (max-width: 900px) {
+    .l-header { justify-content: center; text-align: center; }
+    .l-nav { justify-content: center; }
+    .l-hero { padding-top: 40px; }
+  }
+  @media (max-width: 560px) {
+    .landing-page { padding: 24px 16px 64px; }
+    .l-sheet-row { grid-template-columns: 26px 1fr; row-gap: 8px; }
+    .l-sheet-row .l-status { grid-column: 2; justify-self: start; }
+  }
+</style>
+</head>
+<body>
+
+<div class="note">PRÉVIA — arquivo isolado (landing-preview.html), não afeta o site real. Sem gráfico, na paleta oficial (marinho · royal · teal).</div>
+
+<div class="landing-page">
+
+  <div class="l-header">
+    <div>
+      <div class="l-brand-name">Nauka</div>
+      <div class="l-brand-sub">Educação</div>
+    </div>
+    <nav class="l-nav">
+      <a href="#vestibulares" id="link-origem">ONDE SURGIMOS</a>
+      <a href="mailto:contato@naukaeducacao.com.br?subject=Sugest%C3%A3o%20de%20Vestibular%20-%20Nauka">SUGERIR VESTIBULAR</a>
+    </nav>
+  </div>
+
+  <div class="l-hero">
+    <span class="l-eyebrow">Painel de desempenho</span>
+    <h1 class="l-title">Chega de caminhar no escuro. Monitore sua evolução e tenha o <span class="hl">controle dos seus resultados</span>.</h1>
+    <p class="l-sub">Dos vestibulares tradicionais aos militares, uma ferramenta desenhada para mapear seu desempenho real e ajustar sua rota rumo à aprovação.</p>
+    <button class="l-cta" id="cta">Entrar na Plataforma</button>
+    <span class="l-cta-toast" id="cta-toast">→ no site real, abre o cadastro/login</span>
+
+    <div class="l-hero-strip">
+      <div class="l-strip-item"><span class="l-strip-num">2</span><span class="l-strip-lbl">vestibulares ativos</span></div>
+      <div class="l-strip-item"><span class="l-strip-num">100%</span><span class="l-strip-lbl">baseado em notas de corte reais</span></div>
+      <div class="l-strip-item"><span class="l-strip-num">+</span><span class="l-strip-lbl">novos vestibulares em breve</span></div>
+    </div>
+  </div>
+
+  <div class="l-section" id="vestibulares">
+    <div class="l-section-head">
+      <span class="l-section-num">01</span>
+      <span class="l-section-title">Vestibulares disponíveis</span>
+    </div>
+    <div class="l-sheet">
+      <div class="l-sheet-row on">
+        <div class="l-bubble filled"></div>
+        <div><div class="l-sheet-name">UNESP</div><div class="l-sheet-sub">1ª e 2ª fase</div></div>
+        <span class="l-status ativo">ATIVO</span>
+      </div>
+      <div class="l-sheet-row on">
+        <div class="l-bubble filled"></div>
+        <div><div class="l-sheet-name">Provão Paulista</div><div class="l-sheet-sub">Seriado</div></div>
+        <span class="l-status ativo">ATIVO</span>
+      </div>
+      <div class="l-sheet-row">
+        <div class="l-bubble"></div>
+        <div><div class="l-sheet-name">Vestibulares Militares</div><div class="l-sheet-sub">ITA e outros</div></div>
+        <span class="l-status em-breve">EM BREVE</span>
+      </div>
+      <div class="l-sheet-row">
+        <div class="l-bubble"></div>
+        <div><div class="l-sheet-name">FUVEST e UNICAMP</div><div class="l-sheet-sub">1ª e 2ª fase</div></div>
+        <span class="l-status em-breve">EM BREVE</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="l-section">
+    <div class="l-section-head">
+      <span class="l-section-num">02</span>
+      <span class="l-section-title">Nosso propósito</span>
+    </div>
+    <div class="l-manifesto">
+      <p class="l-manifesto-lead">O acesso às principais universidades <em>não deveria</em> depender de mentorias caras ou planilhas confusas.</p>
+      <p>A Nauka nasceu para simplificar a preparação do estudante, entregando uma ferramenta capaz de descentralizar o uso de dados complexos e permitir que o aluno entenda onde deve evoluir com base nos seus próprios resultados.</p>
+    </div>
+  </div>
+
+  <div class="l-section">
+    <div class="l-section-head">
+      <span class="l-section-num">03</span>
+      <span class="l-section-title">Como funciona</span>
+    </div>
+    <div class="l-timeline">
+      <div class="l-step">
+        <div class="l-step-fase">Fase 1</div>
+        <h3>Escolha seu foco</h3>
+        <p>Defina seu objetivo na plataforma.</p>
+      </div>
+      <div class="l-step">
+        <div class="l-step-fase">Fase 2</div>
+        <h3>Lance seus acertos</h3>
+        <p>Preencha suas notas de forma simplificada e centralizada.</p>
+      </div>
+      <div class="l-step">
+        <div class="l-step-fase">Fase 3</div>
+        <h3>Monitore sua evolução</h3>
+        <p>Acompanhe seu progresso através de gráficos comparativos com as notas de corte baseadas nos últimos anos.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  document.getElementById("link-origem").addEventListener("click", function (ev) {
+    ev.preventDefault();
+    document.getElementById("vestibulares").scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+  var cta = document.getElementById("cta"), toast = document.getElementById("cta-toast");
+  cta.addEventListener("click", function () {
+    toast.classList.add("show");
+    clearTimeout(cta._t);
+    cta._t = setTimeout(function () { toast.classList.remove("show"); }, 2200);
+  });
+</script>
+
+</body>
+</html>

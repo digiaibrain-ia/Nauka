@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "foco-vestibular",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["-y", "http-server", "site", "-c-1"],
+      "port": 8080,
+      "autoPort": true
+    }
+  ]
+}

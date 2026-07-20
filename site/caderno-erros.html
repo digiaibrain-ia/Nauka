@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Caderno de Erros — Nauka</title>
+  <!-- Fontes (mesmas do resto do site) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <!-- Paleta compartilhada + estilos do caderno -->
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/caderno-erros.css">
+  <link rel="stylesheet" href="assets/css/chatbot.css">
+</head>
+<body>
+  <div class="ce-page">
+    <div id="ce-root"></div>
+  </div>
+  <!-- Back-end: biblioteca do Supabase (CDN) + configuração de conexão -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/supabase-config.js"></script>
+  <!-- Lógica do caderno (erros salvos no Supabase) -->
+  <script src="assets/js/caderno-erros.js"></script>
+  <!-- Chatbot Lili — página só é acessada após login, então aparece direto -->
+  <script src="assets/js/chatbot.js"></script>
+  <script>window.NaukaChatbot && window.NaukaChatbot.show();</script>
+</body>
+</html>

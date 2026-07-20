@@ -1,0 +1,54 @@
+Olá, Claude. Vamos criar uma nova tela na aplicação sem alterar a lógica ou os arquivos construídos no Passo 1. O objetivo agora é criar uma "Tela de Apresentação" (Landing Page) que aparecerá antes de tudo, funcionando como a nova Home do site. A tela de cadastro/login existente no Passo 1 só deve aparecer quando o usuário clicar no botão principal desta nova página.
+
+Siga rigorosamente as diretrizes visuais e estruturais abaixo para esta nova tela de entrada:
+
+---
+
+### 1. ARQUITETURA VISUAL, PALETA DE CORES E FONTES
+- **Fundo da Tela (Background):** Usar a cor Hex #0d1b2a (Azul Marinho Premium Escuro), preenchendo o fundo total da tela para dar profundidade.
+- **Tipografia:** Aplicar a fonte 'Plus Jakarta Sans'. Caso não esteja disponível no projeto, fazer a importação necessária.
+- **Cabeçalho (Header):**
+  * Alinhado no topo com espaçamento elegante (margens confortáveis) em relação às bordas da tela.
+  * Lado esquerdo: Nome "Nauka" em caixa alta (uppercase) com peso negrito estruturado, acompanhado pelo subtexto "Educação" em tom azul claro (#62b6cb).
+  * Lado direito: Menu de navegação contendo dois botões/links em CAIXA ALTA (ALL CAPS): "ONDE SURGIMOS" e "SUGERIR VESTIBULAR".
+  * Destaque no Menu: Adicionar um efeito de mini-card (um bloco com fundo sutil ligeiramente mais claro, ex: #1b263b, cantos arredondados e preenchimento interno leve) atrás desses links de navigation para dar um destaque visual moderno.
+  * Regra do Link "SUGERIR VESTIBULAR": Deve ser um link dinâmico utilizando a tag 'mailto:'. Configure para abrir o cliente de e-mail padrão direcionado para o futuro e-mail institucional (com o placeholder contato@naukaeducacao.com.br) com o assunto pré-definido como: "Sugestão de Vestibular - Nauka".
+
+---
+
+### 2. CONTEÚDO DO BLOCO CENTRAL (HERO SECTION)
+- **Posicionamento:** Centralizado horizontal e verticalmente na parte principal da tela.
+- **Título Principal:**
+  "Chega de caminhar no escuro. Monitore sua evolução e tenha o controle dos seus resultados."
+- **Texto de Apoio (Abaixo do título):**
+  Use a cor cinza suave (#a5a5a5) para dar excelente hierarquia de leitura. Texto:
+  "Dos vestibulares tradicionais aos militares, uma ferramenta desenhada para mapear seu desempenho real e ajustar sua rota rumo à aprovação."
+- **Botão de Ação Principal:**
+  Botão em caixa alta (uppercase) com o texto "Entrar na Plataforma". Use a cor Azul Royal/Elétrico (#1b4965) em alto contraste.
+  *Comportamento Técnico (CRÍTICO):* Ao clicar neste botão, o sistema deve acionar por transição suave o formulário de Cadastro/Login já desenvolvido e existente no Passo 1. Não remova ou altere nada do fluxo existente, apenas faça essa conexão de telas.
+
+---
+
+### 3. BLOCOS INFORMATIVOS INFERIORES (CARDS)
+Na parte inferior da página, organize 3 cards horizontais e limpos. Use o fundo Hex #1b263b e bordas sutis para criar efeito tridimensional. Os títulos dos cards devem ser em caixa alta com bom espaçamento entre as letras:
+
+- **Card 1: NOSSO PROPÓSITO**
+  "Acreditamos que o acesso às principais universidades e carreiras de alta performance não deve depender de mentorias caras ou planilhas confusas. A Nauka nasceu para simplificar a preparação do estudante, entregando uma ferramenta capaz de descentralizar o uso de dados complexos e permitir que o aluno entenda onde deve evoluir com base nos seus próprios resultados."
+
+- **Card 2: VESTIBULARES DISPONÍVEIS**
+  Exibir uma lista estruturada indicando o escopo atual e futuro do projeto (com badges/tags coloridas de status):
+  * [ATIVO] UNESP (1ª e 2ª Fase)
+  * [ATIVO] Provão Paulista (Seriado)
+  * [EM BREVE] Vestibulares Militares
+  * [EM BREVE] FUVEST e UNICAMP
+
+- **Card 3: COMO FUNCIONA**
+  Explicar o funcionamento prático em 3 tópicos rápidos:
+  1. Escolha seu foco: Defina seu objetivo na plataforma.
+  2. Lance seus acertos: Preencha suas notas de forma simplificada e centralizada.
+  3. Monitore sua evolução: Acompanhe seu progresso através de gráficos comparativos com as notas de corte baseadas nos últimos anos.
+
+---
+
+### PRÓXIMO PASSO IMEDIATO:
+Claude, crie a estrutura para renderizar esta nova página de entrada e faça a ponte técnica para que o botão "Entrar na Plataforma" chame o fluxo de cadastro existente. Apresente o plano de onde esses novos blocos de código serão inseridos e como faremos o teste inicial na interface, garantindo que o arquivo do Passo 1 permaneça intacto.

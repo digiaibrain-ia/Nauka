@@ -201,4 +201,8 @@
     right: 0;
     border-radius: 0;
   }
+  /* 16px no celular: abaixo disso o iOS Safari dá zoom automático ao focar. */
+  .chatbot-input { font-size: 16px; }
+  .chatbot-widget { bottom: 16px; right: 16px; }
+  .chatbot-bubble { width: 56px; height: 56px; }
 }

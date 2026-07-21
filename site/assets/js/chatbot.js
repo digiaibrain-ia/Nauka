@@ -33,14 +33,7 @@
             <div class="chatbot-messages" id="chatbot-messages"></div>
 
             <div class="chatbot-input-area">
-              <input
-                type="text"
-                class="chatbot-input"
-                id="chatbot-input"
-                placeholder="Pergunta sobre organização de estudos..."
-                autocomplete="off"
-              >
-              <button class="chatbot-send" id="chatbot-send" aria-label="Enviar">→</button>
+              <div class="chatbot-unavailable">Disponível em breve</div>
             </div>
           </div>
         </div>
@@ -55,10 +48,6 @@
     attachEventListeners() {
       document.getElementById('chatbot-bubble').addEventListener('click', () => this.toggle());
       document.getElementById('chatbot-close').addEventListener('click', () => this.close());
-      document.getElementById('chatbot-send').addEventListener('click', () => this.sendMessage());
-      document.getElementById('chatbot-input').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') this.sendMessage();
-      });
     }
 
     toggle() {
@@ -68,7 +57,6 @@
     open() {
       this.isOpen = true;
       document.getElementById('chatbot-container').classList.add('active');
-      document.getElementById('chatbot-input').focus();
     }
 
     close() {

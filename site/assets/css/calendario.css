@@ -25,13 +25,13 @@
 }
 .cal-nav {
   border: none; background: rgba(255,255,255,.10); color: #fff;
-  width: 34px; height: 34px; border-radius: 9px; font-size: 18px; font-weight: 700;
+  width: 34px; height: 34px; border-radius: 9px; font-size: calc(18px * var(--fs-scale)); font-weight: 700;
   transition: background .15s;
 }
 .cal-nav:hover { background: rgba(255,255,255,.22); }
 .cal-monthlabel {
   flex: 1; text-align: center; color: #fff;
-  font-size: 18px; font-weight: 500; text-transform: capitalize;
+  font-size: calc(18px * var(--fs-scale)); font-weight: 500; text-transform: capitalize;
 }
 
 .cal-weekdays {
@@ -39,7 +39,7 @@
   margin-bottom: 6px;
 }
 .cal-weekdays span {
-  text-align: center; font-size: 12px; font-weight: 700;
+  text-align: center; font-size: calc(12px * var(--fs-scale)); font-weight: 700;
   color: var(--navy-soft); text-transform: uppercase; letter-spacing: .3px;
 }
 
@@ -52,7 +52,7 @@
   gap: 3px; padding: 4px; transition: background .12s, box-shadow .12s;
 }
 .cal-day:hover { background: var(--card-bg); }
-.cal-daynum { font-size: 14px; font-weight: 700; color: var(--navy); }
+.cal-daynum { font-size: calc(14px * var(--fs-scale)); font-weight: 700; color: var(--navy); }
 .cal-day.is-other-month { opacity: .35; }
 .cal-day.is-today { border-color: var(--royal); box-shadow: 0 0 0 2px var(--royal-soft) inset; }
 .cal-day.is-selected { background: var(--royal-soft); border-color: var(--royal); }
@@ -82,7 +82,7 @@
 .cal-eventlist { display: flex; flex-direction: column; align-items: center; gap: 10px; }
 .cal-empty {
   width: 100%; text-align: center; margin-top: 16px;
-  color: var(--navy-soft); font-size: 13.5px; font-weight: 700; background: var(--card-bg);
+  color: var(--navy-soft); font-size: calc(13.5px * var(--fs-scale)); font-weight: 700; background: var(--card-bg);
   border: 1px dashed var(--line-strong); border-radius: 12px; padding: 16px 18px;
 }
 .cal-evt {
@@ -92,12 +92,12 @@
 }
 .cal-evt-info { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .cal-evt-tag {
-  align-self: flex-start; font-size: 11px; font-weight: 700; padding: 2px 9px;
+  align-self: flex-start; font-size: calc(11px * var(--fs-scale)); font-weight: 700; padding: 2px 9px;
   border-radius: 999px; background: var(--card-bg); color: var(--navy-soft);
 }
-.cal-evt-titulo { font-size: 13px; font-weight: 400; color: var(--navy); word-break: break-word; }
+.cal-evt-titulo { font-size: calc(13px * var(--fs-scale)); font-weight: 400; color: var(--navy); word-break: break-word; }
 .cal-evt-edit {
-  border: none; background: transparent; color: var(--navy-soft); font-size: 15px;
+  border: none; background: transparent; color: var(--navy-soft); font-size: calc(15px * var(--fs-scale));
   flex-shrink: 0; padding: 4px 6px; border-radius: 6px;
 }
 .cal-evt-edit:hover { background: var(--card-bg); color: var(--navy); }
@@ -134,6 +134,6 @@
 @media (max-width: 560px) {
   .cal-card { padding: 20px 16px; }
   .cal-day { min-height: 40px; }
-  .cal-daynum { font-size: 12.5px; }
-  .cal-monthlabel { font-size: 15px; }
+  .cal-daynum { font-size: calc(12.5px * var(--fs-scale)); }
+  .cal-monthlabel { font-size: calc(15px * var(--fs-scale)); }
 }

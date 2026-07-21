@@ -208,12 +208,15 @@ a { color: var(--royal); }
    APP / DASHBOARD
    ============================================================ */
 #app { display: flex; flex-direction: column; min-height: 100vh; }
-.app-body { flex: 1; }
+.app-body { flex: 1; margin-top: 64px; }
 .app-main { min-width: 0; margin-left: 68px; }
 
-/* ---- Sidebar de navegação (só ícones) — fixa na viewport, sempre visível por
-   inteiro (não depende de scroll, altura do conteúdo ou tamanho da tela) ---- */
-.app-header { min-height: 64px; }
+/* ---- Cabeçalho e sidebar são fixos na viewport, sempre visíveis por inteiro
+   (não dependem de scroll, altura do conteúdo ou tamanho da tela) ---- */
+.app-header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+  min-height: 64px;
+}
 .app-sidebar {
   position: fixed; left: 0; top: 0; bottom: 0; width: 68px;
   background: var(--navy);
@@ -255,7 +258,6 @@ a { color: var(--royal); }
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: 12px;
-  position: relative; z-index: 50;
 }
 .app-header .brand-center { text-align: center; }
 .app-header .logo {

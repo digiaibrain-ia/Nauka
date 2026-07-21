@@ -221,13 +221,15 @@
     body.appendChild(select);
 
     const entrar = el("button", { class: "btn btn-primary btn-block ce-modal-go" }, "Continuar");
-    entrar.onclick = () => {
+    const confirmar = () => {
       const t = targets[Number(select.value)];
       state = { painelId: t.painelId, simId: t.simId };
       draft = { fase1: "", fase2: "", status: "nao_resolvida" };
       backdrop.remove();
       renderWorkspace();
     };
+    entrar.onclick = confirmar;
+    select.onkeydown = (ev) => { if (ev.key === "Enter") { ev.preventDefault(); confirmar(); } };
     body.appendChild(entrar);
 
     modal.appendChild(body);
@@ -284,7 +286,6 @@
     const erros = getErros(t.painelId, t.simId);
     if (erros.length) {
       card.appendChild(buildResumo(erros));
-      card.appendChild(buildAgendarCta(t));
       card.appendChild(buildListaAgrupada(t, erros));
     }
 
@@ -296,10 +297,10 @@
 
     const colL = el("div", { class: "ce-col" });
     const boxFase1 = panelBox("1ª Fase — Questões Objetivas");
-    const inpFase1 = el("input", { class: "ce-input", type: "text", placeholder: "Ex: 5, 10, 12, 18" });
-    inpFase1.value = draft.fase1;
-    inpFase1.oninput = () => { draft.fase1 = inpFase1.value; };
-    boxFase1.appendChild(inpFase1);
+    const taFase1 = el("textarea", { class: "ce-textarea", placeholder: "Ex: 5, 10, 12, 18" });
+    taFase1.value = draft.fase1;
+    taFase1.oninput = () => { draft.fase1 = taFase1.value; };
+    boxFase1.appendChild(taFase1);
     colL.appendChild(boxFase1);
 
     const colR = el("div", { class: "ce-col" });
@@ -308,19 +309,6 @@
     taFase2.value = draft.fase2;
     taFase2.oninput = () => { draft.fase2 = taFase2.value; };
     boxFase2.appendChild(taFase2);
-
-    boxFase2.appendChild(el("div", { class: "ce-termo-lbl" }, "Termômetro de Revisão:"));
-    const termo = el("div", { class: "ce-termo-row" });
-    STATUS.forEach(([k, label]) => {
-      const b = el("button", { class: `ce-termo is-${k}` + (draft.status === k ? " active" : "") }, label.toUpperCase());
-      b.onclick = () => {
-        draft.status = k;
-        [...termo.children].forEach(c => c.classList.remove("active"));
-        b.classList.add("active");
-      };
-      termo.appendChild(b);
-    });
-    boxFase2.appendChild(termo);
     colR.appendChild(boxFase2);
 
     wrap.append(colL, colR);
@@ -344,16 +332,14 @@
     return el("div", { class: "ce-resumo" }, esc(texto));
   }
 
-  function buildAgendarCta(t) {
-    const wrap = el("div", { class: "ce-agendar" });
-    const btn = el("button", { class: "btn btn-ghost ce-agendar-btn" },
-      "🗓️ Quer agendar uma revisão no calendário para esses erros?");
-    btn.onclick = () => abrirModalAgendar(t);
-    wrap.appendChild(btn);
-    return wrap;
+  // Título da tarefa de revisão a partir do conteúdo específico do erro.
+  function tituloRevisao(t, e) {
+    if (e.fase1 && e.fase1.trim()) return `Revisão de erros - Questão ${e.fase1.trim()}`;
+    if (e.fase2 && e.fase2.trim()) return `Revisão de erros - ${e.fase2.trim().slice(0, 60)}`;
+    return `Revisão de erros - ${t.label}`;
   }
 
-  function abrirModalAgendar(t) {
+  function abrirModalAgendar(t, e) {
     const backdrop = el("div", { class: "modal-backdrop" });
     const modal = el("div", { class: "modal ce-modal" });
 
@@ -385,7 +371,7 @@
       const userId = u && u.user ? u.user.id : null;
       if (!userId) { backdrop.remove(); return; }
       salvar.disabled = true;
-      const titulo = `Revisão de erros - ${t.label}`;
+      const titulo = tituloRevisao(t, e);
       const { error } = await SB.from("eventos_calendario").insert({
         user_id: userId, data: inpData.value, titulo, tipo: "Revisão", cor: "#ffaa00",
       });
@@ -426,7 +412,11 @@
     const titulo = e.fase1 ? `Questão ${e.fase1}` : (e.fase2 ? e.fase2.slice(0, 40) : "Erro registrado");
     card.appendChild(el("div", { class: "ce-erro-num" }, esc(titulo)));
 
-    card.appendChild(el("span", { class: `ce-erro-status is-${e.status}` }, statusLabel(e.status).toUpperCase()));
+    const badges = el("div", { class: "ce-erro-badges" });
+    badges.appendChild(el("span", { class: `ce-erro-status is-${e.status}` }, statusLabel(e.status).toUpperCase()));
+    if (e.fase1 && e.fase1.trim()) badges.appendChild(el("span", { class: "ce-erro-origem" }, "1ª FASE"));
+    if (e.fase2 && e.fase2.trim()) badges.appendChild(el("span", { class: "ce-erro-origem" }, "2ª FASE"));
+    card.appendChild(badges);
 
     if (e.fase2 && e.fase2.trim()) {
       card.appendChild(el("p", { class: "ce-erro-txt" }, esc(e.fase2)));
@@ -448,12 +438,14 @@
       await setStatus(e, ordem[(i + 1) % ordem.length]);
       renderWorkspace();
     };
+    const agendar = el("button", { class: "ce-erro-mini" }, "🗓️ Agendar revisão");
+    agendar.onclick = () => abrirModalAgendar(t, e);
     const del = el("button", { class: "ce-erro-mini ce-erro-del" }, "Remover");
     del.onclick = async () => {
       await removeErro(e.id, t.painelId, t.simId);
       renderWorkspace();
     };
-    foot.append(avancar, del);
+    foot.append(avancar, agendar, del);
     card.appendChild(foot);
     return card;
   }

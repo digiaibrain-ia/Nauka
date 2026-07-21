@@ -67,16 +67,18 @@
 .cal-dots { display: flex; gap: 3px; }
 .cal-dot { width: 6px; height: 6px; border-radius: 50%; }
 
+.cal-add { margin-top: 18px; width: 100%; }
+
 /* ---- Coluna lateral (eventos do dia) ---- */
 .cal-side {
-  position: relative; min-width: 0; display: flex; flex-direction: column;
+  min-width: 0; display: flex; flex-direction: column;
   align-items: center; justify-content: flex-start; text-align: center;
   padding-top: 6px;
 }
-.cal-side-inner { width: 100%; max-width: 320px; }
-.cal-add {
-  position: absolute; top: 340px; left: 50%; transform: translate(-50%, -50%);
-  margin: 0;
+.cal-side-inner {
+  width: 100%; max-width: 320px;
+  margin: 6px 10px; padding: 14px;
+  border: 1px solid var(--line); border-radius: 14px; background: var(--card-bg);
 }
 
 .cal-eventlist { display: flex; flex-direction: column; align-items: center; gap: 10px; }
@@ -121,15 +123,11 @@
 .cal-del-btn:hover { background: var(--red-strong-soft); }
 
 /* ---- Embutido na SPA ---- */
-.cal-embed .cal-card { box-shadow: none; padding: 0; border-radius: 0; }
+.cal-embed .cal-card { box-shadow: none; padding: 0; border-radius: 10px; }
 
 /* ---- Responsivo ---- */
 @media (max-width: 900px) {
   .cal-layout { grid-template-columns: 1fr; }
-  /* Sem coluna alta pra centralizar — o botão volta ao fluxo normal, acima da lista */
-  .cal-add {
-    position: static; transform: none; margin: 0 0 18px;
-  }
 }
 @media (max-width: 560px) {
   .cal-card { padding: 20px 16px; }

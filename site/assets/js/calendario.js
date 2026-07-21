@@ -163,6 +163,11 @@
     grid.appendChild(buildGrid());
     main.appendChild(grid);
 
+    // Botão de adicionar evento (abaixo do calendário)
+    const addBtn = el("button", { class: "btn btn-primary cal-add" }, "+ Adicionar evento");
+    addBtn.onclick = () => abrirModal(null);
+    main.appendChild(addBtn);
+
     return main;
   }
 
@@ -222,10 +227,6 @@
   function buildEventSide() {
     const side = el("div", { class: "cal-side" });
     const inner = el("div", { class: "cal-side-inner" });
-
-    const addBtn = el("button", { class: "btn btn-primary cal-add" }, "+ Adicionar evento");
-    addBtn.onclick = () => abrirModal(null);
-    side.appendChild(addBtn);
 
     const list = el("div", { class: "cal-eventlist" });
 

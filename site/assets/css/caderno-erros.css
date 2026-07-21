@@ -17,7 +17,10 @@
 }
 
 /* ---- Landing ---- */
-.ce-landing { text-align: center; padding-top: 52px; padding-bottom: 52px; }
+.ce-landing {
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center; padding-top: 52px; padding-bottom: 52px;
+}
 .ce-landing h1 {
   font-family: 'Space Grotesk', 'Plus Jakarta Sans', var(--font);
   font-size: clamp(26px, 3.2vw, 36px); letter-spacing: -.01em; color: #16213e;
@@ -26,7 +29,7 @@
   color: var(--navy-soft); font-size: calc(16px * var(--fs-scale)); line-height: 1.6;
   max-width: 620px; margin: 14px auto 30px;
 }
-.ce-cta { font-size: calc(16px * var(--fs-scale)); padding: 15px 34px; display: block; margin: 0 auto; }
+.ce-cta { font-size: calc(16px * var(--fs-scale)); padding: 15px 34px; }
 
 /* ---- Modal (reaproveita .modal-backdrop / .modal de styles.css) ---- */
 .ce-modal { max-width: 480px; }
@@ -61,30 +64,13 @@
   color: #fff; font-size: calc(15px * var(--fs-scale)); font-weight: 800;
   letter-spacing: .5px; text-transform: uppercase; margin: 0 0 14px;
 }
-.ce-input, .ce-textarea {
-  width: 100%; resize: vertical;
+.ce-textarea {
+  width: 100%; min-height: 140px; resize: vertical;
   border: none; border-radius: 12px; background: #fff; color: #16213e;
   padding: 14px 16px; font-size: calc(14.5px * var(--fs-scale)); line-height: 1.55; font-family: inherit;
 }
-.ce-textarea { min-height: 140px; }
-.ce-input::placeholder, .ce-textarea::placeholder { color: #9aa6bd; }
-.ce-input:focus, .ce-textarea:focus { outline: none; box-shadow: 0 0 0 3px rgba(98,182,203,.5); }
-
-/* ---- Termômetro de revisão ---- */
-.ce-termo-lbl { color: #fff; font-weight: 700; font-size: calc(13.5px * var(--fs-scale)); margin: 16px 0 10px; }
-.ce-termo-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.ce-termo {
-  border: none; border-radius: 12px; padding: 13px 8px;
-  font-weight: 700; font-size: calc(12.5px * var(--fs-scale)); color: #cbd6e4; background: #24344d;
-  opacity: .6; transition: opacity .15s;
-  letter-spacing: .3px;
-}
-.ce-termo::before { content: "● "; }
-.ce-termo:hover { opacity: .85; }
-.ce-termo.active { opacity: 1; color: #fff; }
-.ce-termo.is-nao_resolvida.active { background: #e60000; }
-.ce-termo.is-revisando.active     { background: #ffaa00; }
-.ce-termo.is-revisada.active      { background: #00aa00; }
+.ce-textarea::placeholder { color: #9aa6bd; }
+.ce-textarea:focus { outline: none; box-shadow: 0 0 0 3px rgba(98,182,203,.5); }
 
 /* ---- Resumo visual ---- */
 .ce-resumo {
@@ -92,10 +78,6 @@
   border-radius: 12px; padding: 16px 20px;
   font-weight: 700; font-size: calc(14px * var(--fs-scale)); color: #16213e;
 }
-
-/* ---- Ação rápida: agendar no calendário ---- */
-.ce-agendar { margin-top: 14px; }
-.ce-agendar-btn { padding: 10px 16px; font-size: calc(13.5px * var(--fs-scale)); }
 
 /* ---- Lista agrupada por status ---- */
 .ce-saved { margin-top: 30px; }
@@ -113,16 +95,22 @@
   border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; background: #fff;
 }
 .ce-erro-num { font-size: calc(16px * var(--fs-scale)); font-weight: 700; color: #16213e; margin-bottom: 8px; }
+.ce-erro-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
 .ce-erro-status {
   display: inline-block; font-size: calc(12px * var(--fs-scale)); font-weight: 600; letter-spacing: .4px;
-  text-transform: uppercase; padding: 4px 10px; border-radius: 999px; color: #fff; margin-bottom: 10px;
+  text-transform: uppercase; padding: 4px 10px; border-radius: 999px; color: #fff;
 }
 .ce-erro-status.is-nao_resolvida { background: #e60000; }
 .ce-erro-status.is-revisando     { background: #ffaa00; }
 .ce-erro-status.is-revisada      { background: #00aa00; }
+.ce-erro-origem {
+  display: inline-block; font-size: calc(11px * var(--fs-scale)); font-weight: 700; letter-spacing: .3px;
+  text-transform: uppercase; padding: 4px 10px; border-radius: 999px;
+  background: var(--card-bg); color: var(--navy-soft); border: 1px solid var(--line);
+}
 .ce-erro-txt { font-size: calc(14px * var(--fs-scale)); color: var(--navy); line-height: 1.5; margin: 0 0 8px; white-space: pre-wrap; }
 .ce-erro-rep { font-size: calc(12.5px * var(--fs-scale)); color: #b4322f; font-weight: 600; margin: 0 0 10px; }
-.ce-erro-foot { display: flex; gap: 10px; margin-top: 6px; }
+.ce-erro-foot { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
 .ce-erro-mini {
   border: 1px solid var(--line-strong); background: #fff; color: var(--navy-soft);
   font-size: calc(12.5px * var(--fs-scale)); font-weight: 700; padding: 7px 14px; border-radius: 8px;
@@ -140,7 +128,7 @@
 
 @media (max-width: 560px) {
   /* 16px no celular: abaixo disso o iOS Safari dá zoom automático ao focar. */
-  .ce-input, .ce-textarea { font-size: 16px; }
+  .ce-textarea { font-size: 16px; }
   .ce-cta { padding: 13px 24px; font-size: calc(15px * var(--fs-scale)); }
   .ce-salvar { padding: 12px 20px; }
 }

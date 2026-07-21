@@ -510,7 +510,7 @@
 
     const stats = el("div", { class: "landing-stats landing-hero-in d4" });
     stats.appendChild(el("div", { class: "landing-stat" },
-      `<span class="landing-stat-num">2</span><span class="landing-stat-lbl">vestibulares ativos</span>`));
+      `<span class="landing-stat-num">4</span><span class="landing-stat-lbl">vestibulares ativos</span>`));
     stats.appendChild(el("div", { class: "landing-stat" },
       `<span class="landing-stat-num">100%</span><span class="landing-stat-lbl">baseado em notas de corte reais</span>`));
     stats.appendChild(el("div", { class: "landing-stat" },
@@ -525,8 +525,9 @@
     const sheet = el("div", { class: "landing-sheet" });
     sheet.appendChild(sheetRow(true, "UNESP", "1ª e 2ª fase", "ativo", "ATIVO", 0));
     sheet.appendChild(sheetRow(true, "Provão Paulista", "Seriado", "ativo", "ATIVO", 1));
-    sheet.appendChild(sheetRow(false, "Vestibulares Militares", "ITA e outros", "em-breve", "EM BREVE", 2));
-    sheet.appendChild(sheetRow(false, "FUVEST e UNICAMP", "1ª e 2ª fase", "em-breve", "EM BREVE", 3));
+    sheet.appendChild(sheetRow(true, "Vestibulares Militares", "ITA", "ativo", "ATIVO", 2));
+    sheet.appendChild(sheetRow(true, "Medicina", "FUVEST", "ativo", "ATIVO", 3));
+    sheet.appendChild(sheetRow(false, "FUVEST e UNICAMP", "1ª e 2ª fase", "em-breve", "EM BREVE", 4));
     secVest.appendChild(sheet);
     inner.appendChild(secVest);
 

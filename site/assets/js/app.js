@@ -619,6 +619,7 @@
   function renderOnboarding(mode = "cadastro") {
     if (window.NaukaChatbot) window.NaukaChatbot.hide();
     root().innerHTML = "";
+    window.scrollTo(0, 0); // evita abrir a tela já "rolada" ao vir da landing
 
     const shell = el("div", { class: "auth-shell mode-" + mode });
     const paneForm = el("div", { class: "auth-pane-form" });
@@ -652,6 +653,15 @@
       const submit = el("button", { class: "btn btn-primary btn-block", type: "submit" },
         m === "cadastro" ? "Criar conta e começar" : "Entrar");
       form.appendChild(submit);
+
+      // Só aparece no mobile (ver CSS) — no desktop a troca de modo já acontece
+      // pelo painel azul ao lado.
+      const switchP = el("p", { class: "auth-switch-mobile" });
+      const switchBtn = el("button", { type: "button" },
+        m === "cadastro" ? "Entrar" : "Cadastre-se");
+      switchBtn.onclick = () => switchTo(m === "cadastro" ? "login" : "cadastro");
+      switchP.append(m === "cadastro" ? "Já tem conta? " : "Ainda não tem conta? ", switchBtn);
+      form.appendChild(switchP);
 
       form.onsubmit = async (ev) => {
         ev.preventDefault();

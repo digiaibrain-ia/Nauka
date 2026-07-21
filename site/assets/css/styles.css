@@ -187,21 +187,40 @@ a { color: var(--royal); }
 }
 .auth-ghost-btn:hover { background: #fff; color: var(--navy); transform: translateY(-1px); }
 
+/* Link de troca de modo (Já tem conta? / Ainda não tem conta?) — só existe
+   visualmente no mobile; no desktop a troca já acontece pelo painel azul. */
+.auth-switch-mobile {
+  display: none; text-align: center; margin-top: 18px; font-size: 13.5px; color: var(--navy-soft);
+}
+.auth-switch-mobile button {
+  background: none; border: none; color: var(--royal-dark); font-weight: 700; font-size: 13.5px;
+  cursor: pointer; padding: 0; text-decoration: underline; text-underline-offset: 2px;
+  font-family: inherit;
+}
+
 @media (max-width: 780px) {
-  .auth-shell { position: static; min-height: 100vh; }
-  .auth-brand-zone, .auth-pane-form {
-    position: static; width: 100%; height: auto; min-height: 50vh;
-    left: 0 !important; border-radius: 0 !important; box-shadow: none; padding: 40px 24px;
-    transition: none;
+  .auth-shell { position: static; min-height: 100vh; display: flex; flex-direction: column; }
+  /* No mobile a marca vira uma faixa compacta fixa no topo — não uma tela
+     inteira — e o formulário ocupa o resto, sem precisar rolar. */
+  .auth-brand-zone {
+    position: static; width: 100%; height: auto; min-height: 0;
+    left: 0 !important; border-radius: 0 !important; box-shadow: none;
+    padding: 22px 24px 16px; transition: none; order: -1;
+    border-bottom: 1px solid rgba(255,255,255,.12);
   }
-  .auth-shell.mode-cadastro { display: flex; flex-direction: column; }
-  .auth-shell.mode-login { display: flex; flex-direction: column-reverse; }
+  .auth-pane-form {
+    position: static; width: 100%; height: auto; min-height: 0;
+    left: 0 !important; border-radius: 0 !important; box-shadow: none;
+    padding: 20px 24px 40px; transition: none; flex: 1;
+  }
   .auth-brand-inner { max-width: 100%; padding: 0; min-width: 0; }
-  .auth-brand-logo { font-size: 44px; letter-spacing: 2px; }
-  .auth-brand-inner h2 { font-size: 24px; }
-  .auth-brand-inner p { font-size: 14px; margin-bottom: 32px; }
+  .auth-brand-logo { font-size: 26px; letter-spacing: 1.5px; }
+  .auth-brand-sub { margin-bottom: 0; }
+  /* No mobile o convite de troca vira o link .auth-switch-mobile (abaixo do
+     botão principal do formulário); o bloco de marca fica só com a logo. */
+  .auth-brand-inner h2, .auth-brand-inner p, .auth-ghost-btn { display: none; }
+  .auth-switch-mobile { display: block; }
   .brand h1 { font-size: 26px; }
-  .auth-ghost-btn { padding: 13px 30px; font-size: 13px; }
 }
 
 /* ============================================================

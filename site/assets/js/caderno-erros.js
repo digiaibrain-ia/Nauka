@@ -399,16 +399,15 @@
       if (!doGrupo.length) return;
       wrap.appendChild(el("h4", { class: `ce-grupo-lbl is-${k}` }, label.toUpperCase()));
       const grid = el("div", { class: "ce-grid-cards" });
-      doGrupo.forEach(e => grid.appendChild(erroCard(t, e, erros)));
+      doGrupo.forEach(e => grid.appendChild(erroCard(t, e)));
       wrap.appendChild(grid);
     });
     return wrap;
   }
 
-  function erroCard(t, e, todosDoAlvo) {
+  function erroCard(t, e) {
     const card = el("div", { class: `ce-erro is-${e.status}` });
 
-    const numeros = parseNumeros(e.fase1);
     const titulo = e.fase1 ? `Questão ${e.fase1}` : (e.fase2 ? e.fase2.slice(0, 40) : "Erro registrado");
     card.appendChild(el("div", { class: "ce-erro-num" }, esc(titulo)));
 
@@ -420,14 +419,6 @@
 
     if (e.fase2 && e.fase2.trim()) {
       card.appendChild(el("p", { class: "ce-erro-txt" }, esc(e.fase2)));
-    }
-
-    // Feedback de recorrência: essa(s) questão(ões) aparecem em mais de um registro.
-    const contagem = {};
-    todosDoAlvo.forEach(o => parseNumeros(o.fase1).forEach(n => { contagem[n] = (contagem[n] || 0) + 1; }));
-    const repetida = numeros.find(n => contagem[n] > 1);
-    if (repetida != null) {
-      card.appendChild(el("p", { class: "ce-erro-rep" }, `Você errou essa questão ${contagem[repetida]} vezes`));
     }
 
     const foot = el("div", { class: "ce-erro-foot" });

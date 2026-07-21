@@ -225,7 +225,7 @@
 
     const addBtn = el("button", { class: "btn btn-primary cal-add" }, "+ Adicionar evento");
     addBtn.onclick = () => abrirModal(null);
-    inner.appendChild(addBtn);
+    side.appendChild(addBtn);
 
     const list = el("div", { class: "cal-eventlist" });
 

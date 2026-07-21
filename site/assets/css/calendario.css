@@ -69,17 +69,20 @@
 
 /* ---- Coluna lateral (eventos do dia) ---- */
 .cal-side {
-  min-width: 0; display: flex; flex-direction: column;
+  position: relative; min-width: 0; display: flex; flex-direction: column;
   align-items: center; justify-content: flex-start; text-align: center;
   padding-top: 6px;
 }
 .cal-side-inner { width: 100%; max-width: 320px; }
-.cal-add { width: 100%; margin-bottom: 18px; }
+.cal-add {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  margin: 0;
+}
 
 .cal-eventlist { display: flex; flex-direction: column; align-items: center; gap: 10px; }
 .cal-empty {
-  width: 100%; text-align: center;
-  color: var(--navy-soft); font-size: 13.5px; background: var(--card-bg);
+  width: 100%; text-align: center; margin-top: 16px;
+  color: var(--navy-soft); font-size: 13.5px; font-weight: 700; background: var(--card-bg);
   border: 1px dashed var(--line-strong); border-radius: 12px; padding: 16px 18px;
 }
 .cal-evt {
@@ -123,6 +126,10 @@
 /* ---- Responsivo ---- */
 @media (max-width: 900px) {
   .cal-layout { grid-template-columns: 1fr; }
+  /* Sem coluna alta pra centralizar — o botão volta ao fluxo normal, acima da lista */
+  .cal-add {
+    position: static; transform: none; margin: 0 0 18px;
+  }
 }
 @media (max-width: 560px) {
   .cal-card { padding: 20px 16px; }

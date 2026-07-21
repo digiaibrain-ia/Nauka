@@ -26,7 +26,7 @@
   color: var(--navy-soft); font-size: calc(16px * var(--fs-scale)); line-height: 1.6;
   max-width: 620px; margin: 14px auto 30px;
 }
-.ce-cta { font-size: calc(16px * var(--fs-scale)); padding: 15px 34px; }
+.ce-cta { font-size: calc(16px * var(--fs-scale)); padding: 15px 34px; display: block; margin: 0 auto; }
 
 /* ---- Modal (reaproveita .modal-backdrop / .modal de styles.css) ---- */
 .ce-modal { max-width: 480px; }

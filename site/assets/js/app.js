@@ -17,6 +17,7 @@
   const ICON_ANALISE = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10"/><path d="M11 20V4"/><path d="M18 20v-7"/></svg>';
   const ICON_CADERNO = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.5h11a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1H8a2 2 0 0 1-2-2V4a.5.5 0 0 1 .5-.5Z"/><path d="M6 17h12"/><path d="M9 7h6M9 10.5h6"/></svg>';
   const ICON_CONFIG = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 13.5a7.6 7.6 0 0 0 0-3l1.9-1.5-2-3.4-2.3.9a7.6 7.6 0 0 0-2.6-1.5L14 2.5h-4l-.4 2.5a7.6 7.6 0 0 0-2.6 1.5l-2.3-.9-2 3.4L4.6 10.5a7.6 7.6 0 0 0 0 3l-1.9 1.5 2 3.4 2.3-.9a7.6 7.6 0 0 0 2.6 1.5l.4 2.5h4l.4-2.5a7.6 7.6 0 0 0 2.6-1.5l2.3.9 2-3.4-1.9-1.5Z"/></svg>';
+  const ICON_CALENDARIO = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="16" rx="2"/><path d="M8 3v4M16 3v4M3.5 10h17"/></svg>';
   const ICON_PERFIL = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c1.4-3.6 4.4-5.5 7.5-5.5s6.1 1.9 7.5 5.5"/></svg>';
 
   /* ============================================================
@@ -743,6 +744,7 @@
     { key: "inicio", label: "Início", icon: ICON_INICIO },
     { key: "analise", label: "Análise", icon: ICON_ANALISE },
     { key: "caderno", label: "Caderno de Erros", icon: ICON_CADERNO },
+    { key: "calendario", label: "Calendário", icon: ICON_CALENDARIO },
     { key: "config", label: "Configurações", icon: ICON_CONFIG, bottom: true },
     { key: "perfil", label: "Perfil", icon: ICON_PERFIL },
   ];
@@ -839,6 +841,12 @@
           if (window.NaukaCadernoErros) window.NaukaCadernoErros.mount(cadernoWrap, ativo.id);
         }, 0);
       }
+    } else if (activeSection === "calendario") {
+      const calWrap = el("div", { id: "calendario-embed-root", class: "cal-embed" });
+      cont.appendChild(calWrap);
+      setTimeout(() => {
+        if (window.NaukaCalendario) window.NaukaCalendario.mount(calWrap);
+      }, 0);
     } else {
       // 'inicio' | 'analise'
       if (!ativo) {

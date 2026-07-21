@@ -11,6 +11,8 @@
   const META_REDACAO = 24;  // referencial fixo da planilha
   const META_FINAL = 50;    // média final alvo (referencial fixo)
   const QUESTION_ICON = '<svg width="18" height="18" viewBox="0 0 24 24" fill="#1b1f28"><circle cx="12" cy="12" r="11"/><text x="12" y="16" font-size="16" font-weight="bold" fill="white" text-anchor="middle" dominant-baseline="middle">?</text></svg>';
+  const EYE_ICON = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 12S5 5 12 5s10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12Z"/><circle cx="12" cy="12" r="3.2"/></svg>';
+  const EYE_OFF_ICON = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18"/><path d="M10.6 5.2A10.9 10.9 0 0 1 12 5c7 0 10.5 7 10.5 7a13.4 13.4 0 0 1-3.15 4.15M6.6 6.6C3.4 8.6 1.5 12 1.5 12s3.5 7 10.5 7a10.7 10.7 0 0 0 4.2-.85"/><path d="M9.5 9.6a3.2 3.2 0 0 0 4.9 4.1"/></svg>';
 
   /* ---------- Ícones da sidebar (stroke = currentColor, herdam a cor do item) ---------- */
   const ICON_INICIO = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9a1 1 0 0 0 1 1H10v-6h4v6h3.5a1 1 0 0 0 1-1v-9"/></svg>';
@@ -193,8 +195,16 @@
     return (error && error.message) || "Ocorreu um erro. Tente novamente.";
   }
 
+  // Aplica as preferências salvas (tema, fonte, contraste) assim que o site abre.
+  function aplicarConfiguracoesSalvas() {
+    applyTheme(getOrInitSetting("theme", "auto"));
+    applyFontSize(getOrInitSetting("fontSize", "normal"));
+    applyContrast(getOrInitSetting("highContrast", "false") === "true");
+  }
+
   // Na abertura do site: se já houver sessão ativa no Supabase, entra direto.
   async function boot() {
+    aplicarConfiguracoesSalvas();
     if (!SB) {
       console.error("[Nauka] Conexão com o Supabase indisponível — verifique supabase-config.js.");
       render();
@@ -207,6 +217,65 @@
       }
     } catch (e) { /* segue para a landing/onboarding */ }
     render();
+  }
+
+  /* ============================================================
+     1c) CONFIGURAÇÕES — funções auxiliares
+     ============================================================ */
+  const SETTINGS_KEY = "nauka_settings_v1";
+
+  function getSettings() {
+    try { return JSON.parse(localStorage.getItem(SETTINGS_KEY)) || {}; }
+    catch (e) { return {}; }
+  }
+
+  function getOrInitSetting(key, defaultValue) {
+    const s = getSettings();
+    return s[key] != null ? s[key] : defaultValue;
+  }
+
+  function saveOrUpdateSetting(key, value) {
+    const s = getSettings();
+    s[key] = value;
+    try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(s)); } catch (e) {}
+  }
+
+  function applyTheme(theme) {
+    const root = document.documentElement;
+    if (theme === "light") root.style.colorScheme = "light";
+    else if (theme === "dark") root.style.colorScheme = "dark";
+    else root.style.colorScheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  }
+
+  // O CSS do site usa tamanhos fixos em px (não em rem), então mudar o font-size
+  // da raiz não tem efeito algum nos elementos. Usamos "zoom" para escalar a
+  // página inteira de verdade (funciona em navegadores Chromium/Edge).
+  function applyFontSize(size) {
+    const root = document.documentElement;
+    const zooms = { pequena: "0.875", normal: "1", grande: "1.125", "muito-grande": "1.25" };
+    root.style.zoom = zooms[size] || "1";
+  }
+
+  function applyContrast(high) {
+    const root = document.documentElement;
+    if (high) root.classList.add("high-contrast");
+    else root.classList.remove("high-contrast");
+  }
+
+
+  async function deletarContaUsuario() {
+    const userId = Store.getSession();
+    if (!userId || !SB) { alert("Erro: usuário não identificado."); return; }
+    try {
+      const { error } = await SB.auth.admin.deleteUser(userId);
+      if (error) throw error;
+      alert("Conta deletada com sucesso.");
+      Store.logout();
+      render();
+    } catch (e) {
+      alert("Erro ao deletar conta. Tente novamente ou contate o suporte.");
+      console.error(e);
+    }
   }
 
   /* ============================================================
@@ -649,7 +718,15 @@
       }
       const senhaPlaceholder = m === "cadastro" ? "Crie uma senha" : "Sua senha";
       form.appendChild(fieldHTML("E-mail", `<input class="input" name="email" type="email" placeholder="Voce@gmail.com" autocomplete="email">`));
-      form.appendChild(fieldHTML("Senha", `<input class="input" name="senha" type="password" placeholder="${senhaPlaceholder}" autocomplete="${m === "cadastro" ? "new-password" : "current-password"}">`));
+      form.appendChild(campoSenha("Senha", {
+        name: "senha", placeholder: senhaPlaceholder,
+        autocomplete: m === "cadastro" ? "new-password" : "current-password",
+      }));
+      if (m === "cadastro") {
+        form.appendChild(campoSenha("Confirmar senha", {
+          name: "confirmarSenha", placeholder: "Repita a senha", autocomplete: "new-password",
+        }));
+      }
 
       const submit = el("button", { class: "btn btn-primary btn-block", type: "submit" },
         m === "cadastro" ? "Criar conta e começar" : "Entrar");
@@ -674,6 +751,9 @@
 
         const nome = m === "cadastro" ? (f.nome.value || "").trim() : "";
         if (m === "cadastro" && !nome) return showErr("Informe o seu nome.");
+        if (m === "cadastro" && senha !== (f.confirmarSenha.value || "").trim()) {
+          return showErr("As senhas não coincidem. Revise e tente novamente.");
+        }
 
         submit.disabled = true;
         const rotuloOriginal = submit.textContent;
@@ -742,6 +822,29 @@
   }
   function fieldHTML(label, innerHTML) {
     return el("div", { class: "field" }, `<label>${label}</label>${innerHTML}`);
+  }
+
+  // Campo de senha com botão de "olho" para mostrar/ocultar o que foi digitado.
+  function campoSenha(label, attrs) {
+    const field = el("div", { class: "field" }, `<label>${label}</label>`);
+    const wrap = el("div", { class: "senha-wrap" });
+    const attrsStr = Object.entries(attrs).map(([k, v]) => `${k}="${esc(v)}"`).join(" ");
+    wrap.innerHTML = `<input class="input" type="password" ${attrsStr}>`;
+    const toggle = el("button", {
+      type: "button", class: "senha-toggle", "aria-label": "Mostrar senha", tabindex: "-1",
+    });
+    toggle.innerHTML = EYE_ICON;
+    let visivel = false;
+    toggle.onclick = () => {
+      visivel = !visivel;
+      const input = $("input", wrap);
+      input.type = visivel ? "text" : "password";
+      toggle.innerHTML = visivel ? EYE_OFF_ICON : EYE_ICON;
+      toggle.setAttribute("aria-label", visivel ? "Ocultar senha" : "Mostrar senha");
+    };
+    wrap.appendChild(toggle);
+    field.appendChild(wrap);
+    return field;
   }
 
   /* ============================================================
@@ -873,9 +976,95 @@
   }
 
   function renderConfigPanel() {
-    const wrap = el("div", { class: "card" });
-    wrap.appendChild(el("h2", {}, "Configurações"));
-    wrap.appendChild(el("p", { class: "card-sub" }, "Em breve."));
+    const data = Store.userData();
+    const wrap = el("div");
+
+    // Seção 1: Tema e Acessibilidade
+    const sec1 = el("div", { class: "card" });
+    sec1.appendChild(el("h3", {}, "Tema e Acessibilidade"));
+
+    const themeSetting = getOrInitSetting("theme", "auto");
+    const themeField = el("div", { class: "field" });
+    themeField.innerHTML = `<label>Tema</label>`;
+    const themeSel = el("select", { class: "select", id: "cfg-theme" });
+    themeSel.appendChild(el("option", { value: "auto" }, "Automático (sistema)"));
+    themeSel.appendChild(el("option", { value: "light" }, "Claro"));
+    themeSel.appendChild(el("option", { value: "dark" }, "Escuro"));
+    themeSel.value = themeSetting;
+    themeSel.onchange = () => {
+      saveOrUpdateSetting("theme", themeSel.value);
+      applyTheme(themeSel.value);
+    };
+    themeField.appendChild(themeSel);
+    sec1.appendChild(themeField);
+
+    const fontField = el("div", { class: "field" });
+    fontField.innerHTML = `<label>Tamanho de fonte</label>`;
+    const fontSel = el("select", { class: "select", id: "cfg-font" });
+    const fontSetting = getOrInitSetting("fontSize", "normal");
+    fontSel.appendChild(el("option", { value: "pequena" }, "Pequena"));
+    fontSel.appendChild(el("option", { value: "normal" }, "Normal"));
+    fontSel.appendChild(el("option", { value: "grande" }, "Grande"));
+    fontSel.appendChild(el("option", { value: "muito-grande" }, "Muito grande"));
+    fontSel.value = fontSetting;
+    fontSel.onchange = () => {
+      saveOrUpdateSetting("fontSize", fontSel.value);
+      applyFontSize(fontSel.value);
+    };
+    fontField.appendChild(fontSel);
+    sec1.appendChild(fontField);
+
+    const contrastField = el("div", { class: "field" });
+    contrastField.innerHTML = `<label>Contraste aumentado</label>`;
+    const contrastChk = el("input", { type: "checkbox", id: "cfg-contrast", style: "width:20px;height:20px;cursor:pointer;" });
+    const contrastSetting = getOrInitSetting("highContrast", "false") === "true";
+    contrastChk.checked = contrastSetting;
+    contrastChk.onchange = () => {
+      saveOrUpdateSetting("highContrast", String(contrastChk.checked));
+      applyContrast(contrastChk.checked);
+    };
+    contrastField.appendChild(contrastChk);
+    sec1.appendChild(contrastField);
+    wrap.appendChild(sec1);
+
+    // Seção 2: Ordenação Padrão
+    const sec2 = el("div", { class: "card", style: "margin-top:16px;" });
+    sec2.appendChild(el("h3", {}, "Ordenação Padrão de Simulados"));
+    sec2.appendChild(el("p", { class: "card-sub" }, "Escolha como os simulados aparecem na tabela."));
+
+    const sortField = el("div", { class: "field" });
+    sortField.innerHTML = `<label>Ordenar por</label>`;
+    const sortSel = el("select", { class: "select", id: "cfg-sort" });
+    const sortSetting = getOrInitSetting("defaultSort", "data-desc");
+    sortSel.appendChild(el("option", { value: "data-desc" }, "Mais recente primeiro"));
+    sortSel.appendChild(el("option", { value: "data-asc" }, "Mais antigo primeiro"));
+    sortSel.appendChild(el("option", { value: "media-desc" }, "Melhor média primeiro"));
+    sortSel.appendChild(el("option", { value: "media-asc" }, "Pior média primeiro"));
+    sortSel.value = sortSetting;
+    sortSel.onchange = () => {
+      saveOrUpdateSetting("defaultSort", sortSel.value);
+      renderApp();
+    };
+    sortField.appendChild(sortSel);
+    sec2.appendChild(sortField);
+    wrap.appendChild(sec2);
+
+    // Seção 3: Privacidade e Dados (por último)
+    const sec3 = el("div", { class: "card", style: "margin-top:16px;" });
+    sec3.appendChild(el("h3", {}, "Privacidade e Dados"));
+    const privacyInfo = el("p", { class: "card-sub" });
+    privacyInfo.innerHTML = `Seus dados são armazenados localmente no navegador e no Supabase (back-end seguro com criptografia). Você pode deletar sua conta a qualquer momento — todos os dados serão removidos permanentemente.`;
+    sec3.appendChild(privacyInfo);
+
+    const bDeleteAccount = el("button", { class: "btn", style: "background:#C0281E;color:#fff;margin-top:12px;" }, "Deletar Conta");
+    bDeleteAccount.onclick = () => {
+      if (!confirm("Tem certeza? Essa ação é irreversível e removerá TODOS os seus dados.")) return;
+      if (!confirm("Essa é a última confirmação. Seus dados serão deletados permanentemente.")) return;
+      deletarContaUsuario();
+    };
+    sec3.appendChild(bDeleteAccount);
+    wrap.appendChild(sec3);
+
     return wrap;
   }
 

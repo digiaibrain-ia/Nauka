@@ -35,6 +35,7 @@
   --shadow:   0 1px 2px rgba(13,27,42,.05), 0 6px 20px rgba(13,27,42,.06);
   --shadow-sm: 0 1px 2px rgba(13,27,42,.06);
   --font: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+  font-size: 16px;
 }
 
 * { box-sizing: border-box; }
@@ -45,8 +46,18 @@ html, body {
   background: var(--bg);
   color: var(--navy);
   font-family: var(--font);
+  font-size: inherit;
   -webkit-font-smoothing: antialiased;
   line-height: 1.5;
+}
+
+/* Modo high-contrast (acessibilidade) */
+html.high-contrast {
+  --navy: #000;
+  --navy-soft: #333;
+  --card-bg: #f0f0f0;
+  --line: #000;
+  --line-strong: #000;
 }
 
 button { font-family: inherit; cursor: pointer; }
@@ -105,6 +116,19 @@ a { color: var(--royal); }
   box-shadow: 0 0 0 3px var(--royal-soft);
 }
 .textarea { resize: vertical; min-height: 64px; }
+
+/* ---- Campo de senha com botão de mostrar/ocultar ---- */
+.senha-wrap { position: relative; }
+.senha-wrap .input { padding-right: 42px; }
+.senha-toggle {
+  position: absolute; top: 50%; right: 6px; transform: translateY(-50%);
+  width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+  background: transparent; border: none; border-radius: 7px;
+  color: #9aa6bd; cursor: pointer;
+}
+.senha-toggle:hover { color: var(--navy-soft); background: var(--royal-soft); }
+.senha-toggle:focus-visible { outline: 2px solid var(--royal); outline-offset: 1px; }
+
 .help { font-size: 12.5px; color: var(--navy-soft); margin-top: 6px; }
 .error-msg {
   background: var(--coral-soft); color: #8c3a26;

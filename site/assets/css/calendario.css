@@ -75,7 +75,7 @@
 }
 .cal-side-inner { width: 100%; max-width: 320px; }
 .cal-add {
-  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  position: absolute; top: 340px; left: 50%; transform: translate(-50%, -50%);
   margin: 0;
 }
 

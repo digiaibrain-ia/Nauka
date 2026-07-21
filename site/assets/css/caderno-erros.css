@@ -1,5 +1,5 @@
 /* ============================================================
-   NAUKA — CADERNO DE ERROS ESTRATÉGICO (estilos)
+   NAUKA — CADERNO DE ERROS (estilos)
    Depende das variáveis de paleta de styles.css.
    Cartão branco sobre o fundo azul-petróleo; cards internos navy.
    ============================================================ */
@@ -7,6 +7,7 @@
   min-height: 100vh;
   padding: 40px 20px 60px;
   display: flex; justify-content: center; align-items: flex-start;
+  background: #a9d6d9;
 }
 .ce-card {
   width: 100%; max-width: 1200px;
@@ -19,7 +20,7 @@
 .ce-landing { text-align: center; padding-top: 52px; padding-bottom: 52px; }
 .ce-landing h1 {
   font-family: 'Space Grotesk', 'Plus Jakarta Sans', var(--font);
-  font-size: clamp(26px, 3.2vw, 36px); letter-spacing: -.01em;
+  font-size: clamp(26px, 3.2vw, 36px); letter-spacing: -.01em; color: #16213e;
 }
 .ce-lead {
   color: var(--navy-soft); font-size: calc(16px * var(--fs-scale)); line-height: 1.6;
@@ -29,155 +30,99 @@
 
 /* ---- Modal (reaproveita .modal-backdrop / .modal de styles.css) ---- */
 .ce-modal { max-width: 480px; }
-.ce-modal-label, .ce-modal-q {
-  display: block; font-size: calc(13.5px * var(--fs-scale)); font-weight: 700; color: var(--navy);
+.ce-modal-label {
+  display: block; font-size: calc(13.5px * var(--fs-scale)); font-weight: 700; color: #16213e;
   margin: 4px 0 10px;
 }
-.ce-modal-q { margin-top: 22px; }
-.ce-modal-go { margin-bottom: 12px; padding: 15px; font-size: calc(15px * var(--fs-scale)); }
-.ce-modal-go:last-child { margin-bottom: 0; }
+.ce-modal-go { margin-top: 18px; padding: 15px; font-size: calc(15px * var(--fs-scale)); }
 
-/* ---- Faixa do simulado ativo ---- */
-.ce-activebar {
+/* ---- Cabeçalho: simulado ativo + ações ---- */
+.ce-head {
   display: flex; align-items: center; justify-content: space-between; gap: 14px;
-  flex-wrap: wrap;
-  background: var(--card-bg); border-left: 5px solid var(--royal);
-  border-radius: 12px; padding: 16px 20px; margin-bottom: 22px;
+  flex-wrap: wrap; margin-bottom: 26px;
 }
 .ce-activebar-lbl { color: var(--navy-soft); font-weight: 600; }
-.ce-activebar strong { color: var(--navy); }
-.ce-troca { padding: 9px 16px; font-size: calc(13.5px * var(--fs-scale)); }
-
-/* ---- Abas de frente ---- */
-.ce-tabs {
-  display: flex; gap: 8px; border-bottom: 1px solid var(--line);
-  padding-bottom: 14px; margin-bottom: 24px;
+.ce-head strong { color: #16213e; }
+.ce-head-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+.ce-troca { padding: 12px 18px; font-size: calc(13.5px * var(--fs-scale)); }
+.ce-salvar {
+  background: #16213e; padding: 12px 24px; font-size: calc(14.5px * var(--fs-scale));
 }
-.ce-tab {
-  border: none; background: transparent; color: var(--navy-soft);
-  font-weight: 700; font-size: calc(15px * var(--fs-scale)); padding: 10px 20px; border-radius: 10px;
-}
-.ce-tab:hover { background: var(--card-bg); }
-.ce-tab.active { background: var(--navy); color: #fff; }
 
-/* ---- Grid do formulário ---- */
+/* ---- Grid do formulário (1ª fase / 2ª fase lado a lado) ---- */
 .ce-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: start; }
 .ce-col { display: flex; flex-direction: column; gap: 22px; }
 
-/* ---- Cards navy internos ---- */
 .ce-box {
-  background: var(--navy); color: #fff;
+  background: #16213e; color: #fff;
   border-radius: 16px; padding: 22px;
 }
 .ce-box-title {
   color: #fff; font-size: calc(15px * var(--fs-scale)); font-weight: 800;
-  letter-spacing: .5px; text-transform: uppercase; margin: 0 0 4px;
+  letter-spacing: .5px; text-transform: uppercase; margin: 0 0 14px;
 }
-.ce-box-sub { color: #9db2c9; font-size: calc(13.5px * var(--fs-scale)); line-height: 1.5; margin: 0 0 14px; }
-.ce-textarea {
-  width: 100%; min-height: 140px; resize: vertical;
-  border: none; border-radius: 12px; background: #fff; color: var(--navy);
+.ce-input, .ce-textarea {
+  width: 100%; resize: vertical;
+  border: none; border-radius: 12px; background: #fff; color: #16213e;
   padding: 14px 16px; font-size: calc(14.5px * var(--fs-scale)); line-height: 1.55; font-family: inherit;
 }
-.ce-textarea::placeholder { color: #9aa6bd; }
-.ce-textarea:focus { outline: none; box-shadow: 0 0 0 3px rgba(98,182,203,.5); }
+.ce-textarea { min-height: 140px; }
+.ce-input::placeholder, .ce-textarea::placeholder { color: #9aa6bd; }
+.ce-input:focus, .ce-textarea:focus { outline: none; box-shadow: 0 0 0 3px rgba(98,182,203,.5); }
 
-/* ---- Diagnóstico cognitivo (multi) ---- */
-.ce-diag-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.ce-diag-btn {
-  border: none; border-radius: 12px; padding: 14px 12px;
-  font-weight: 700; font-size: calc(14px * var(--fs-scale)); color: #fff;
-  background: #24344d; opacity: .55; transition: opacity .15s, box-shadow .15s, transform .05s;
-}
-.ce-diag-btn:hover { opacity: .8; }
-.ce-diag-btn.selected { opacity: 1; }
-.ce-diag-btn.selected::before { content: "✓ "; }
-.ce-diag-btn.is-atencao  { background: #E5484D; }
-.ce-diag-btn.is-teoria   { background: #E8952E; }
-.ce-diag-btn.is-tempo    { background: #24344d; }
-.ce-diag-btn.is-pegadinha { background: var(--purple); }
-.ce-diag-btn.is-tempo.selected { box-shadow: 0 0 0 2px #62b6cb; }
-.ce-diag-btn.selected:not(.is-tempo) { box-shadow: 0 0 18px rgba(255,255,255,.28); }
-
-/* ---- Toggle de frequência ---- */
-.ce-toggle-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.ce-toggle {
-  border: none; border-radius: 12px; padding: 14px 12px;
-  font-weight: 700; font-size: calc(14px * var(--fs-scale)); color: #cbd6e4; background: #24344d;
-  transition: background .15s, color .15s;
-}
-.ce-toggle:hover { background: #2c3f5c; }
-.ce-toggle.active { background: #fff; color: var(--navy); }
-
-/* ---- Plano + termômetro ---- */
+/* ---- Termômetro de revisão ---- */
 .ce-termo-lbl { color: #fff; font-weight: 700; font-size: calc(13.5px * var(--fs-scale)); margin: 16px 0 10px; }
 .ce-termo-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
 .ce-termo {
   border: none; border-radius: 12px; padding: 13px 8px;
-  font-weight: 700; font-size: calc(13.5px * var(--fs-scale)); color: #cbd6e4; background: #24344d;
-  opacity: .6; transition: opacity .15s, transform .05s;
+  font-weight: 700; font-size: calc(12.5px * var(--fs-scale)); color: #cbd6e4; background: #24344d;
+  opacity: .6; transition: opacity .15s;
+  letter-spacing: .3px;
 }
 .ce-termo::before { content: "● "; }
 .ce-termo:hover { opacity: .85; }
 .ce-termo.active { opacity: 1; color: #fff; }
-.ce-termo.is-nao_resolvida.active { background: #E5484D; }
-.ce-termo.is-em_revisao.active    { background: #8A6D16; }
-.ce-termo.is-dominada.active      { background: var(--success); }
+.ce-termo.is-nao_resolvida.active { background: #e60000; }
+.ce-termo.is-revisando.active     { background: #ffaa00; }
+.ce-termo.is-revisada.active      { background: #00aa00; }
 
-/* ---- Rodapé do formulário ---- */
-.ce-form-foot {
-  display: flex; justify-content: space-between; align-items: center; gap: 14px;
-  flex-wrap: wrap; margin-top: 24px; padding-top: 22px; border-top: 1px solid var(--line);
+/* ---- Resumo visual ---- */
+.ce-resumo {
+  margin-top: 28px; background: var(--card-bg); border-left: 5px solid #16213e;
+  border-radius: 12px; padding: 16px 20px;
+  font-weight: 700; font-size: calc(14px * var(--fs-scale)); color: #16213e;
 }
-.ce-lili-btn {
-  background: var(--purple-soft); color: var(--purple-dark);
-  border: none; border-radius: 12px; padding: 14px 22px;
-  font-weight: 800; font-size: calc(15px * var(--fs-scale)); transition: background .15s, transform .1s;
-}
-.ce-lili-btn:hover { background: #e6dcfb; transform: translateY(-1px); }
-.ce-salvar { padding: 14px 30px; font-size: calc(15px * var(--fs-scale)); }
 
-/* ---- Lista de erros registrados ---- */
-.ce-saved { margin-top: 34px; }
-.ce-saved-head { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
-.ce-saved-head h3 { font-size: calc(16px * var(--fs-scale)); }
-.ce-saved-count {
-  background: var(--navy); color: #fff; font-size: calc(12.5px * var(--fs-scale)); font-weight: 800;
-  min-width: 24px; height: 24px; padding: 0 8px; border-radius: 999px;
-  display: inline-flex; align-items: center; justify-content: center;
+/* ---- Ação rápida: agendar no calendário ---- */
+.ce-agendar { margin-top: 14px; }
+.ce-agendar-btn { padding: 10px 16px; font-size: calc(13.5px * var(--fs-scale)); }
+
+/* ---- Lista agrupada por status ---- */
+.ce-saved { margin-top: 30px; }
+.ce-grupo-lbl {
+  font-size: calc(14px * var(--fs-scale)); font-weight: 600; text-transform: uppercase;
+  margin: 22px 0 12px;
 }
-.ce-empty {
-  color: var(--navy-soft); font-size: calc(14px * var(--fs-scale)); background: var(--card-bg);
-  border: 1px dashed var(--line-strong); border-radius: 12px; padding: 18px 20px;
-}
+.ce-grupo-lbl.is-nao_resolvida { color: #e60000; }
+.ce-grupo-lbl.is-revisando     { color: #ffaa00; }
+.ce-grupo-lbl.is-revisada      { color: #00aa00; }
+
+.ce-grid-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
 .ce-erro {
-  border: 1px solid var(--line); border-left: 5px solid var(--line-strong);
-  border-radius: 12px; padding: 16px 18px; margin-bottom: 12px; background: #fff;
+  border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; background: #fff;
 }
-.ce-erro.is-nao_resolvida { border-left-color: #E5484D; }
-.ce-erro.is-em_revisao    { border-left-color: #E8952E; }
-.ce-erro.is-dominada      { border-left-color: var(--success); }
-.ce-erro-top { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 10px; }
+.ce-erro-num { font-size: calc(16px * var(--fs-scale)); font-weight: 700; color: #16213e; margin-bottom: 8px; }
 .ce-erro-status {
-  font-size: calc(11px * var(--fs-scale)); font-weight: 800; letter-spacing: .4px; text-transform: uppercase;
-  padding: 4px 10px; border-radius: 999px; color: #fff;
+  display: inline-block; font-size: calc(12px * var(--fs-scale)); font-weight: 600; letter-spacing: .4px;
+  text-transform: uppercase; padding: 4px 10px; border-radius: 999px; color: #fff; margin-bottom: 10px;
 }
-.ce-erro-status.is-nao_resolvida { background: #E5484D; }
-.ce-erro-status.is-em_revisao    { background: #E8952E; }
-.ce-erro-status.is-dominada      { background: var(--success); }
-.ce-erro-tag {
-  font-size: calc(11px * var(--fs-scale)); font-weight: 700; padding: 4px 10px; border-radius: 999px;
-  background: var(--card-bg); color: var(--navy-soft); border: 1px solid var(--line);
-}
-.ce-erro-tag.is-atencao  { background: #FCE9E9; color: #B4322F; border-color: #F3C6C5; }
-.ce-erro-tag.is-teoria   { background: #FBEFD9; color: #8A5A12; border-color: #F0D6A6; }
-.ce-erro-tag.is-tempo    { background: var(--card-bg); color: var(--navy-soft); }
-.ce-erro-tag.is-pegadinha { background: var(--purple-soft); color: var(--purple-dark); border-color: #ddd0f8; }
-.ce-erro-tag.ce-recorrente { background: #FDECEC; color: #B4322F; border-color: #F3C6C5; }
-.ce-erro-txt { font-size: calc(14.5px * var(--fs-scale)); color: var(--navy); line-height: 1.55; margin: 0 0 8px; white-space: pre-wrap; }
-.ce-erro-plano { font-size: calc(13.5px * var(--fs-scale)); color: var(--navy-soft); line-height: 1.5; margin: 0 0 12px; }
-.ce-erro-plano strong { color: var(--navy); }
-.ce-erro-foot { display: flex; gap: 10px; }
+.ce-erro-status.is-nao_resolvida { background: #e60000; }
+.ce-erro-status.is-revisando     { background: #ffaa00; }
+.ce-erro-status.is-revisada      { background: #00aa00; }
+.ce-erro-txt { font-size: calc(14px * var(--fs-scale)); color: var(--navy); line-height: 1.5; margin: 0 0 8px; white-space: pre-wrap; }
+.ce-erro-rep { font-size: calc(12.5px * var(--fs-scale)); color: #b4322f; font-weight: 600; margin: 0 0 10px; }
+.ce-erro-foot { display: flex; gap: 10px; margin-top: 6px; }
 .ce-erro-mini {
   border: 1px solid var(--line-strong); background: #fff; color: var(--navy-soft);
   font-size: calc(12.5px * var(--fs-scale)); font-weight: 700; padding: 7px 14px; border-radius: 8px;
@@ -189,12 +134,13 @@
 /* ---- Responsivo ---- */
 @media (max-width: 820px) {
   .ce-grid { grid-template-columns: 1fr; }
+  .ce-grid-cards { grid-template-columns: 1fr; }
   .ce-card { padding: 26px 18px; }
 }
 
 @media (max-width: 560px) {
   /* 16px no celular: abaixo disso o iOS Safari dá zoom automático ao focar. */
-  .ce-textarea { font-size: 16px; }
+  .ce-input, .ce-textarea { font-size: 16px; }
   .ce-cta { padding: 13px 24px; font-size: calc(15px * var(--fs-scale)); }
-  .ce-salvar { padding: 13px 22px; }
+  .ce-salvar { padding: 12px 20px; }
 }

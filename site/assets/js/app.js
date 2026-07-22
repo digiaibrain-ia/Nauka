@@ -1355,8 +1355,6 @@
       const canvas = el("canvas", { id: "evoChart" });
       box.appendChild(canvas);
       chartCard.appendChild(box);
-      chartCard.appendChild(el("div", { class: "future-hint" },
-        "🔧 Em breve: registro detalhado de erros por simulado, como na planilha original."));
       wrap.appendChild(chartCard);
       setTimeout(() => drawChart(p), 0);
     }

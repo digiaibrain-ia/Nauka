@@ -914,20 +914,27 @@
         label.onclick = () => { data.ativo = p.id; Store.saveUserData(data); renderApp(); };
         tab.appendChild(label);
         const x = el("button", { class: "tab-close", title: "Fechar painel" }, "×");
-        x.onclick = async () => {
-          if (!confirm(`Remover o painel "${panelLabel(p)}"? Os dados deste painel serão apagados.`)) return;
-          const tabela = p.tipo === "provao" ? "paineis_provao_paulista"
-            : p.tipo === "ita" ? "paineis_ita"
-            : p.tipo === "fuvest_medicina" ? "paineis_fuvest_medicina"
-            : "paineis_unesp";
-          const { error } = await SB.from(tabela).delete().eq("id", p.id);
-          if (error) { alert("Não foi possível remover o painel. Tente novamente."); return; }
-          // Limpa os erros do Caderno vinculados a este painel (não têm exclusão automática).
-          await SB.from("caderno_erros").delete().eq("painel_id", p.id);
-          data.paineis = data.paineis.filter(q => q.id !== p.id);
-          if (data.ativo === p.id) data.ativo = data.paineis[0] ? data.paineis[0].id : null;
-          Store.saveUserData(data);
-          renderApp();
+        x.onclick = () => {
+          openConfirmModal({
+            titulo: "Remover painel",
+            mensagem: `Remover o painel "${panelLabel(p)}"? Os dados deste painel serão apagados.`,
+            confirmLabel: "Remover",
+            danger: true,
+            onConfirm: async () => {
+              const tabela = p.tipo === "provao" ? "paineis_provao_paulista"
+                : p.tipo === "ita" ? "paineis_ita"
+                : p.tipo === "fuvest_medicina" ? "paineis_fuvest_medicina"
+                : "paineis_unesp";
+              const { error } = await SB.from(tabela).delete().eq("id", p.id);
+              if (error) { alert("Não foi possível remover o painel. Tente novamente."); return; }
+              // Limpa os erros do Caderno vinculados a este painel (não têm exclusão automática).
+              await SB.from("caderno_erros").delete().eq("painel_id", p.id);
+              data.paineis = data.paineis.filter(q => q.id !== p.id);
+              if (data.ativo === p.id) data.ativo = data.paineis[0] ? data.paineis[0].id : null;
+              Store.saveUserData(data);
+              renderApp();
+            },
+          });
         };
         tab.appendChild(x);
         tabbar.appendChild(tab);
@@ -1058,9 +1065,13 @@
 
     const bDeleteAccount = el("button", { class: "btn", style: "background:#C0281E;color:#fff;margin-top:12px;" }, "Deletar Conta");
     bDeleteAccount.onclick = () => {
-      if (!confirm("Tem certeza? Essa ação é irreversível e removerá TODOS os seus dados.")) return;
-      if (!confirm("Essa é a última confirmação. Seus dados serão deletados permanentemente.")) return;
-      deletarContaUsuario();
+      openConfirmModal({
+        titulo: "Deletar conta",
+        mensagem: "Essa ação é irreversível: sua conta e TODOS os seus dados (painéis, simulados, caderno de erros) serão removidos permanentemente. Tem certeza que deseja continuar?",
+        confirmLabel: "Deletar permanentemente",
+        danger: true,
+        onConfirm: deletarContaUsuario,
+      });
     };
     sec3.appendChild(bDeleteAccount);
     wrap.appendChild(sec3);
@@ -2829,6 +2840,30 @@
   function closeModal() {
     const b = document.getElementById("modal-back");
     if (b) b.remove();
+  }
+
+  /* Modal de confirmação (substitui window.confirm por um pop-up do próprio site) */
+  function openConfirmModal({ titulo, mensagem, confirmLabel, danger, onConfirm }) {
+    closeModal();
+    const back = el("div", { class: "modal-backdrop", id: "modal-back" });
+    const modal = el("div", { class: "modal" + (danger ? " aviso-modal" : "") });
+    const head = el("div", { class: "modal-head" });
+    head.innerHTML = `<h2>${esc(titulo)}</h2>`;
+    const x = el("button", { class: "close-x" }, "×");
+    x.onclick = closeModal;
+    head.appendChild(x);
+    const body = el("div", { class: "modal-body" });
+    body.innerHTML = `<p>${esc(mensagem)}</p>`;
+    const foot = el("div", { class: "modal-foot" });
+    const cancel = el("button", { class: "btn btn-ghost" }, "Cancelar");
+    cancel.onclick = closeModal;
+    const confirmBtn = el("button", { class: danger ? "btn" : "btn btn-primary", style: danger ? "background:#C0281E;color:#fff;" : "" }, confirmLabel || "Confirmar");
+    confirmBtn.onclick = () => { closeModal(); onConfirm(); };
+    foot.append(cancel, confirmBtn);
+    modal.append(head, body, foot);
+    back.appendChild(modal);
+    back.onclick = (e) => { if (e.target === back) closeModal(); };
+    document.body.appendChild(back);
   }
 
   function abrirAvisoCorte() {

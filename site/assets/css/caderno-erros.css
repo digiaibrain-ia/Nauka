@@ -72,6 +72,78 @@
 .ce-textarea::placeholder { color: #9aa6bd; }
 .ce-textarea:focus { outline: none; box-shadow: 0 0 0 3px rgba(98,182,203,.5); }
 
+/* ---- Coluna "Minhas Provas" ---- */
+.ce-provas-hint {
+  color: #b9c4dc; font-size: calc(12.5px * var(--fs-scale));
+  margin: -6px 0 14px; line-height: 1.4;
+}
+.ce-slot { margin-bottom: 14px; }
+.ce-slot:last-child { margin-bottom: 0; }
+.ce-slot-lbl {
+  color: #fff; font-size: calc(12.5px * var(--fs-scale)); font-weight: 700;
+  margin-bottom: 7px;
+}
+.ce-slot-files { display: flex; flex-direction: column; gap: 6px; margin-bottom: 7px; }
+.ce-file {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(255,255,255,.10); border-radius: 9px; padding: 6px 8px 6px 10px;
+}
+.ce-file-ico { font-size: calc(14px * var(--fs-scale)); line-height: 1; }
+.ce-file-nome {
+  flex: 1; min-width: 0; text-align: left; border: none; background: none;
+  color: #fff; font-size: calc(12.5px * var(--fs-scale)); font-family: inherit;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer;
+  text-decoration: underline; text-underline-offset: 2px;
+}
+.ce-file-nome:hover { color: #a9d6d9; }
+.ce-file-del {
+  flex-shrink: 0; border: none; background: rgba(255,255,255,.14); color: #fff;
+  width: 22px; height: 22px; border-radius: 6px; cursor: pointer;
+  font-size: calc(12px * var(--fs-scale)); line-height: 1;
+}
+.ce-file-del:hover { background: #e60000; }
+.ce-drop {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  border: 1.5px dashed rgba(255,255,255,.4); border-radius: 10px;
+  padding: 11px 10px; cursor: pointer; color: #cdd6e8;
+  font-size: calc(12.5px * var(--fs-scale)); transition: border-color .15s, background .15s;
+}
+.ce-drop:hover { border-color: rgba(255,255,255,.7); color: #fff; }
+.ce-drop.is-over { border-color: #a9d6d9; background: rgba(169,214,217,.14); color: #fff; }
+.ce-drop-ico { font-size: calc(16px * var(--fs-scale)); line-height: 1; }
+
+/* ---- Visualizador de prova (janela flutuante e arrastável) ---- */
+.ce-viewer {
+  position: fixed; top: 12vh; left: 50%; transform: translateX(-50%);
+  width: min(560px, 92vw); max-height: 82vh; z-index: 1000;
+  background: #fff; border-radius: 14px; overflow: hidden;
+  box-shadow: 0 24px 70px rgba(13,27,42,.45); display: flex; flex-direction: column;
+}
+.ce-viewer-bar {
+  display: flex; align-items: center; gap: 10px; cursor: move;
+  background: #16213e; color: #fff; padding: 10px 12px; user-select: none;
+}
+.ce-viewer-title {
+  flex: 1; min-width: 0; font-size: calc(13px * var(--fs-scale)); font-weight: 600;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.ce-viewer-close {
+  flex-shrink: 0; border: none; background: rgba(255,255,255,.16); color: #fff;
+  width: 26px; height: 26px; border-radius: 7px; cursor: pointer; font-size: 13px;
+}
+.ce-viewer-close:hover { background: #e60000; }
+.ce-viewer-body { overflow: auto; background: #f0f2f7; }
+.ce-viewer-img { display: block; width: 100%; height: auto; }
+.ce-viewer-frame { display: block; width: 100%; height: 70vh; border: none; background: #fff; }
+
+/* ---- Toast (avisos rápidos) ---- */
+.ce-toast {
+  position: fixed; left: 50%; bottom: 26px; transform: translateX(-50%);
+  z-index: 1100; background: #16213e; color: #fff;
+  padding: 11px 18px; border-radius: 10px; font-size: calc(13.5px * var(--fs-scale));
+  box-shadow: 0 10px 30px rgba(13,27,42,.35); max-width: 90vw; text-align: center;
+}
+
 /* ---- Resumo visual ---- */
 .ce-resumo {
   margin-top: 28px; background: var(--card-bg); border-left: 5px solid #16213e;
@@ -86,7 +158,7 @@
   margin: 22px 0 12px;
 }
 .ce-grupo-lbl.is-nao_resolvida { color: #e60000; }
-.ce-grupo-lbl.is-revisando     { color: #ffaa00; }
+.ce-grupo-lbl.is-revisando     { color: #b56b00; }
 .ce-grupo-lbl.is-revisada      { color: #00aa00; }
 
 .ce-grid-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
@@ -101,7 +173,7 @@
   text-transform: uppercase; padding: 4px 10px; border-radius: 999px; color: #fff;
 }
 .ce-erro-status.is-nao_resolvida { background: #e60000; }
-.ce-erro-status.is-revisando     { background: #ffaa00; }
+.ce-erro-status.is-revisando     { background: #ffaa00; color: #5c3d00; }
 .ce-erro-status.is-revisada      { background: #00aa00; }
 .ce-erro-origem {
   display: inline-block; font-size: calc(11px * var(--fs-scale)); font-weight: 700; letter-spacing: .3px;

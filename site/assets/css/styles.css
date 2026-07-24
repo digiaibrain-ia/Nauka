@@ -123,6 +123,16 @@ a { color: var(--royal); }
 }
 .textarea { resize: vertical; min-height: 64px; }
 
+/* Remove as setas nativas de incremento dos campos de nota (type=number):
+   elas ocupavam espaço dentro do campo e cortavam parte do número digitado,
+   principalmente em colunas estreitas da tabela de simulados. */
+input[type="number"] { -moz-appearance: textfield; }
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 /* ---- Campo de senha com botão de mostrar/ocultar ---- */
 .senha-wrap { position: relative; }
 .senha-wrap .input { padding-right: 42px; }
@@ -396,7 +406,9 @@ a { color: var(--royal); }
 /* Meta Redação: input editável pelo aluno, no mesmo estilo do meta-value */
 .meta-value-input { display: flex; align-items: baseline; gap: 6px; }
 .meta-value-input .meta-input {
-  width: 80px; font-size: calc(23px * var(--fs-scale)); font-weight: 800; color: var(--navy);
+  /* largura em "ch" (baseada no dígito) em vez de px fixo — acompanha o
+     tamanho da fonte e cabe números grandes como "1000.00" sem cortar. */
+  width: 9ch; min-width: 80px; font-size: calc(23px * var(--fs-scale)); font-weight: 800; color: var(--navy);
   border: 1px solid var(--line-strong); border-radius: 7px;
   padding: 6px 10px; background: #fff; font-family: inherit;
 }
@@ -478,7 +490,8 @@ table.sim tbody tr:nth-child(even):not(.row-input) { background: #FAFBFE; }
 table.sim td.num { text-align: center; }
 table.sim input.cell {
   width: 100%; min-width: 56px; border: 1px solid var(--line-strong);
-  border-radius: 7px; padding: 7px 8px; font-size: calc(13.5px * var(--fs-scale)); background: var(--input-bg);
+  border-radius: 7px; padding: 7px 8px; font-size: calc(13.5px * var(--fs-scale));
+  background: var(--input-bg); color: var(--navy);
 }
 table.sim input.cell.small { text-align: center; }
 .status-ok {
@@ -617,9 +630,9 @@ table.sim input.cell.small { text-align: center; }
   padding: 9px 18px; font-size: calc(13.5px * var(--fs-scale)); font-weight: 600; cursor: pointer;
 }
 .aviso-modal .btn-entendi:hover { background: var(--royal-dark); }
-.fac-opt.disabled { color: #aab3c5; background: var(--bg); cursor: not-allowed; }
+.fac-opt.disabled { color: #7c8aa3; background: var(--bg); cursor: not-allowed; }
 .fac-opt .soon {
-  display: block; font-size: calc(10.5px * var(--fs-scale)); font-weight: 700; color: #aab3c5;
+  display: block; font-size: calc(10.5px * var(--fs-scale)); font-weight: 700; color: #7c8aa3;
   text-transform: uppercase; letter-spacing: .5px; margin-top: 3px;
 }
 
@@ -686,7 +699,8 @@ table.sim input.cell.small { text-align: center; }
 .serie3-field label .mx { color: #9aa6bd; font-weight: 500; }
 .serie3-field .cell {
   flex: 1; max-width: 160px; text-align: center; font-size: calc(18px * var(--fs-scale)); font-weight: 700;
-  border: 1px solid var(--line-strong); border-radius: 8px; padding: 10px; background: var(--input-bg);
+  border: 1px solid var(--line-strong); border-radius: 8px; padding: 10px;
+  background: var(--input-bg); color: var(--navy);
 }
 .serie3-field .cell:focus { outline: none; border-color: var(--royal); box-shadow: 0 0 0 3px var(--royal-soft); }
 

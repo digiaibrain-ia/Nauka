@@ -1234,10 +1234,11 @@
         err.textContent = "Selecione a modalidade de concorrência."; err.classList.remove("hidden"); return;
       }
       const metaSegundaFase = fmNotaPrimeiraChamada({ campus: state.campus, modalidade: state.modalidade });
+      const metaObjetivaInicial = fmCorte1Fase({ modalidade: state.modalidade }) || 0;
       const { data: row, error } = await SB.from("paineis_fuvest_medicina").insert({
         user_id: Store.getSession(),
         campus: state.campus, modalidade: state.modalidade,
-        meta_objetiva: 0, meta_redacao: 0, meta_segunda_fase: metaSegundaFase,
+        meta_objetiva: metaObjetivaInicial, meta_redacao: 0, meta_segunda_fase: metaSegundaFase,
       }).select().single();
       if (error) {
         err.textContent = "Não foi possível criar o painel. Tente novamente."; err.classList.remove("hidden"); return;

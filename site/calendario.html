@@ -7,6 +7,7 @@
   <!-- Fontes (mesmas do resto do site) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <!-- Paleta compartilhada + estilos do calendário -->
   <link rel="stylesheet" href="assets/css/styles.css">
@@ -17,13 +18,14 @@
   <div class="cal-page">
     <div id="cal-root"></div>
   </div>
+  <!-- defer: baixam em paralelo, mas mantêm a ordem de execução de sempre. -->
   <!-- Back-end: biblioteca do Supabase (CDN) + configuração de conexão -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="assets/js/supabase-config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+  <script src="assets/js/supabase-config.js" defer></script>
   <!-- Lógica do calendário (eventos salvos no Supabase) -->
-  <script src="assets/js/calendario.js"></script>
+  <script src="assets/js/calendario.js" defer></script>
   <!-- Chatbot Lili — página só é acessada após login, então aparece direto -->
-  <script src="assets/js/chatbot.js"></script>
-  <script>window.NaukaChatbot && window.NaukaChatbot.show();</script>
+  <script src="assets/js/chatbot.js" defer></script>
+  <script>document.addEventListener("DOMContentLoaded", () => window.NaukaChatbot && window.NaukaChatbot.show());</script>
 </body>
 </html>

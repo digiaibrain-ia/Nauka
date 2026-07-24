@@ -17,6 +17,41 @@
   let errosCache = {};
   const cacheKey = (painelId, simId) => painelId + "|" + simId;
 
+  // Cache das provas anexadas: mesma chave "painelId|simId" -> [arquivos].
+  let provasCache = {};
+  const MAX_FOTOS_SLOT = 8;              // limite de fotos por campo (evita travar)
+  const MAX_BYTES = 15 * 1024 * 1024;    // 15 MB por arquivo
+
+  // Campos de upload por tipo de vestibular — refletem os cadernos de prova reais.
+  const SLOTS = {
+    ita: [
+      ["fase1", "1ª fase"],
+      ["fase2_matematica", "2ª fase · Matemática"],
+      ["fase2_fisica", "2ª fase · Física"],
+      ["fase2_quimica", "2ª fase · Química"],
+      ["fase2_portugues", "2ª fase · Português"],
+    ],
+    unesp: [
+      ["fase1", "1ª fase (objetiva)"],
+      ["fase2_dia1", "2ª fase · Dia 1"],
+      ["fase2_dia2", "2ª fase · Dia 2 (Ling. + Redação)"],
+    ],
+    fuvest_medicina: [
+      ["fase1", "1ª fase"],
+      ["fase2_dia1", "2ª fase · Dia 1 (Port. + Redação)"],
+      ["fase2_dia2", "2ª fase · Dia 2 (Específicas)"],
+    ],
+    provao: [
+      ["prova", "Prova"],
+    ],
+  };
+  function panelTipo(p) {
+    if (p.tipo === "ita") return "ita";
+    if (p.tipo === "fuvest_medicina") return "fuvest_medicina";
+    if (p.tipo === "provao") return "provao";
+    return "unesp"; // painéis UNESP não têm campo tipo
+  }
+
   /* ---------- Painéis (leitura do espelho local) ---------- */
   function db() {
     try { return JSON.parse(localStorage.getItem(KEY)) || {}; }
@@ -47,6 +82,139 @@
       const key = cacheKey(r.painel_id, r.simulado_id);
       (errosCache[key] = errosCache[key] || []).push(rowToEntry(r));
     });
+  }
+
+  /* ---------- Provas anexadas (Supabase Storage + tabela) ---------- */
+  async function carregarProvas() {
+    provasCache = {};
+    if (!SB) return;
+    const { data, error } = await SB.from("provas_anexadas")
+      .select("*").order("created_at", { ascending: true });
+    if (error || !data) return;
+    data.forEach(r => {
+      const key = cacheKey(r.painel_id, r.simulado_id);
+      (provasCache[key] = provasCache[key] || []).push({
+        id: r.id, slot: r.slot, path: r.arquivo_path, nome: r.arquivo_nome, tipo: r.tipo,
+      });
+    });
+  }
+  function getProvasSlot(painelId, simId, slot) {
+    return (provasCache[cacheKey(painelId, simId)] || []).filter(p => p.slot === slot);
+  }
+  function tipoDoArquivo(file) {
+    const n = (file.name || "").toLowerCase();
+    if (file.type === "application/pdf" || n.endsWith(".pdf")) return "pdf";
+    if ((file.type || "").indexOf("image/") === 0 || /\.(jpe?g|png|webp|heic|heif)$/.test(n)) return "imagem";
+    return null;
+  }
+
+  async function subirArquivos(t, slot, fileList) {
+    if (!SB) return;
+    const { data: u } = await SB.auth.getUser();
+    const userId = u && u.user ? u.user.id : null;
+    if (!userId) { toast("Faça login para anexar provas."); return; }
+    const files = Array.from(fileList);
+    for (const file of files) {
+      const tipo = tipoDoArquivo(file);
+      if (!tipo) { toast("Formato não aceito: use PDF ou imagem."); continue; }
+      if (file.size > MAX_BYTES) { toast(`"${file.name}" passa de 15 MB.`); continue; }
+      const atuais = getProvasSlot(t.painelId, t.simId, slot);
+      if (tipo === "pdf") {
+        // Um PDF por campo: remove o(s) anterior(es) antes de subir o novo.
+        for (const old of atuais.filter(p => p.tipo === "pdf")) await removerProva(old, t, { silent: true });
+      } else if (atuais.filter(p => p.tipo === "imagem").length >= MAX_FOTOS_SLOT) {
+        toast(`Máximo de ${MAX_FOTOS_SLOT} fotos por campo.`); continue;
+      }
+      const safe = (file.name || "arquivo").replace(/[^\w.\-]+/g, "_").slice(-60);
+      const path = `${userId}/${t.painelId}/${t.simId}/${slot}/${Date.now()}_${safe}`;
+      const { error: upErr } = await SB.storage.from("provas").upload(path, file, { upsert: false });
+      if (upErr) { toast("Não foi possível enviar. Tente de novo."); continue; }
+      const { data, error } = await SB.from("provas_anexadas").insert({
+        user_id: userId, painel_id: t.painelId, simulado_id: t.simId,
+        slot, arquivo_path: path, arquivo_nome: file.name || safe, tipo,
+      }).select().single();
+      if (error || !data) { await SB.storage.from("provas").remove([path]); continue; }
+      const key = cacheKey(t.painelId, t.simId);
+      (provasCache[key] = provasCache[key] || []).push({
+        id: data.id, slot, path, nome: data.arquivo_nome, tipo,
+      });
+    }
+    renderWorkspace();
+  }
+
+  async function removerProva(prova, t, opts) {
+    opts = opts || {};
+    if (SB) {
+      await SB.storage.from("provas").remove([prova.path]);
+      await SB.from("provas_anexadas").delete().eq("id", prova.id);
+    }
+    const key = cacheKey(t.painelId, t.simId);
+    provasCache[key] = (provasCache[key] || []).filter(p => p.id !== prova.id);
+    if (!opts.silent) renderWorkspace();
+  }
+
+  async function abrirVisualizador(prova) {
+    if (!SB) return;
+    const { data, error } = await SB.storage.from("provas").createSignedUrl(prova.path, 3600);
+    if (error || !data) { toast("Não foi possível abrir o arquivo."); return; }
+    const url = data.signedUrl;
+    const win = el("div", { class: "ce-viewer" });
+    const bar = el("div", { class: "ce-viewer-bar" });
+    bar.appendChild(el("span", { class: "ce-viewer-title" }, esc(prova.nome)));
+    const fechar = el("button", { class: "ce-viewer-close" }, "✕");
+    fechar.onclick = () => win.remove();
+    bar.appendChild(fechar);
+    win.appendChild(bar);
+    const body = el("div", { class: "ce-viewer-body" });
+    if (prova.tipo === "pdf") {
+      body.appendChild(el("iframe", { class: "ce-viewer-frame", src: url }));
+    } else {
+      body.appendChild(el("img", { class: "ce-viewer-img", src: url, alt: esc(prova.nome) }));
+    }
+    win.appendChild(body);
+    document.body.appendChild(win);
+    tornarArrastavel(win, bar);
+  }
+
+  // Deixa a janela do visualizador arrastável pela barra do topo (mouse e toque).
+  function tornarArrastavel(win, handle) {
+    let sx = 0, sy = 0, ox = 0, oy = 0, dragging = false;
+    const ponto = (e) => (e.touches && e.touches[0]) ? e.touches[0] : e;
+    const onMove = (e) => {
+      if (!dragging) return;
+      const p = ponto(e);
+      win.style.left = (ox + p.clientX - sx) + "px";
+      win.style.top = (oy + p.clientY - sy) + "px";
+      if (e.cancelable) e.preventDefault();
+    };
+    const onUp = () => {
+      dragging = false;
+      document.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mouseup", onUp);
+      document.removeEventListener("touchmove", onMove);
+      document.removeEventListener("touchend", onUp);
+    };
+    const onDown = (e) => {
+      dragging = true;
+      const p = ponto(e);
+      const r = win.getBoundingClientRect();
+      sx = p.clientX; sy = p.clientY; ox = r.left; oy = r.top;
+      win.style.left = ox + "px"; win.style.top = oy + "px";
+      win.style.right = "auto"; win.style.bottom = "auto";
+      document.addEventListener("mousemove", onMove);
+      document.addEventListener("mouseup", onUp);
+      document.addEventListener("touchmove", onMove, { passive: false });
+      document.addEventListener("touchend", onUp);
+      e.preventDefault();
+    };
+    handle.addEventListener("mousedown", onDown);
+    handle.addEventListener("touchstart", onDown, { passive: false });
+  }
+
+  function toast(msg) {
+    const box = el("div", { class: "ce-toast" }, esc(msg));
+    document.body.appendChild(box);
+    setTimeout(() => box.remove(), 3200);
   }
 
   /* ---------- Helpers ---------- */
@@ -82,13 +250,13 @@
     (data.paineis || []).forEach(p => {
       if (p.simulados) {
         p.simulados.forEach(s => out.push({
-          painelId: p.id, simId: s.id,
+          painelId: p.id, simId: s.id, tipo: panelTipo(p),
           painelLabel: panelLabel(p), simLabel: s.titulo,
           label: `${panelLabel(p)} — ${s.titulo}`,
         }));
       } else {
         out.push({
-          painelId: p.id, simId: "_painel",
+          painelId: p.id, simId: "_painel", tipo: panelTipo(p),
           painelLabel: panelLabel(p), simLabel: "Ciclo atual",
           label: panelLabel(p),
         });
@@ -280,7 +448,7 @@
     card.appendChild(head);
 
     // Formulário de novo registro
-    card.appendChild(buildForm());
+    card.appendChild(buildForm(t));
 
     // Resumo + lista agrupada por status
     const erros = getErros(t.painelId, t.simId);
@@ -292,9 +460,10 @@
     root().appendChild(card);
   }
 
-  function buildForm() {
+  function buildForm(t) {
     const wrap = el("div", { class: "ce-grid" });
 
+    // Coluna esquerda: 1ª e 2ª fase empilhadas na mesma vertical.
     const colL = el("div", { class: "ce-col" });
     const boxFase1 = panelBox("1ª Fase — Questões Objetivas");
     const taFase1 = el("textarea", { class: "ce-textarea", placeholder: "Ex: 5, 10, 12, 18" });
@@ -303,13 +472,16 @@
     boxFase1.appendChild(taFase1);
     colL.appendChild(boxFase1);
 
-    const colR = el("div", { class: "ce-col" });
     const boxFase2 = panelBox("2ª Fase — Questões Discursivas");
     const taFase2 = el("textarea", { class: "ce-textarea", placeholder: "Ex: Errei questão 5-10 por confundir o período" });
     taFase2.value = draft.fase2;
     taFase2.oninput = () => { draft.fase2 = taFase2.value; };
     boxFase2.appendChild(taFase2);
-    colR.appendChild(boxFase2);
+    colL.appendChild(boxFase2);
+
+    // Coluna direita: provas anexadas do simulado selecionado.
+    const colR = el("div", { class: "ce-col" });
+    colR.appendChild(buildProvasBox(t));
 
     wrap.append(colL, colR);
     return wrap;
@@ -319,6 +491,55 @@
     const b = el("div", { class: "ce-box" });
     b.appendChild(el("h3", { class: "ce-box-title" }, esc(titulo)));
     return b;
+  }
+
+  /* ---------- Coluna "Minhas Provas" ---------- */
+  function buildProvasBox(t) {
+    const box = el("div", { class: "ce-box ce-provas" });
+    box.appendChild(el("h3", { class: "ce-box-title" }, "Minhas Provas"));
+    box.appendChild(el("p", { class: "ce-provas-hint" }, "Anexe sua prova ou imagem das questões"));
+    (SLOTS[t.tipo] || SLOTS.unesp).forEach(([slot, label]) => box.appendChild(buildSlot(t, slot, label)));
+    return box;
+  }
+
+  function buildSlot(t, slot, label) {
+    const wrap = el("div", { class: "ce-slot" });
+    wrap.appendChild(el("div", { class: "ce-slot-lbl" }, esc(label)));
+
+    const arquivos = getProvasSlot(t.painelId, t.simId, slot);
+    if (arquivos.length) {
+      const lista = el("div", { class: "ce-slot-files" });
+      arquivos.forEach(a => lista.appendChild(buildArquivoChip(t, a)));
+      wrap.appendChild(lista);
+    }
+
+    const temPdf = arquivos.some(a => a.tipo === "pdf");
+    const dz = el("label", { class: "ce-drop" });
+    const inp = el("input", { type: "file", accept: ".pdf,image/*", multiple: "multiple" });
+    inp.style.display = "none";
+    inp.onchange = () => { if (inp.files && inp.files.length) subirArquivos(t, slot, inp.files); inp.value = ""; };
+    dz.appendChild(inp);
+    dz.appendChild(el("span", { class: "ce-drop-ico" }, "＋"));
+    dz.appendChild(el("span", { class: "ce-drop-txt" }, temPdf ? "Adicionar foto" : "Anexar ou arrastar"));
+    dz.addEventListener("dragover", (e) => { e.preventDefault(); dz.classList.add("is-over"); });
+    dz.addEventListener("dragleave", () => dz.classList.remove("is-over"));
+    dz.addEventListener("drop", (e) => {
+      e.preventDefault(); dz.classList.remove("is-over");
+      if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) subirArquivos(t, slot, e.dataTransfer.files);
+    });
+    wrap.appendChild(dz);
+    return wrap;
+  }
+
+  function buildArquivoChip(t, a) {
+    const chip = el("div", { class: "ce-file" });
+    chip.appendChild(el("span", { class: "ce-file-ico" }, a.tipo === "pdf" ? "📄" : "🖼️"));
+    const nome = el("button", { class: "ce-file-nome", title: "Abrir" }, esc(a.nome));
+    nome.onclick = () => abrirVisualizador(a);
+    const del = el("button", { class: "ce-file-del", title: "Remover" }, "✕");
+    del.onclick = () => removerProva(a, t);
+    chip.append(nome, del);
+    return chip;
   }
 
   /* ---------- Resumo visual ---------- */
@@ -453,6 +674,7 @@
       return;
     }
     try { await carregarErros(); } catch (e) { /* mostra vazio se falhar */ }
+    try { await carregarProvas(); } catch (e) { /* provas ficam vazias se falhar */ }
     renderLanding();
   }
 
@@ -472,6 +694,7 @@
     state = { painelId: painelId || null, simId: null };
     draft = { fase1: "", fase2: "", status: "nao_resolvida" };
     try { await carregarErros(); } catch (e) { /* mostra vazio se falhar */ }
+    try { await carregarProvas(); } catch (e) { /* provas ficam vazias se falhar */ }
     renderLanding();
   }
 

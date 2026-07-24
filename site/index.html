@@ -7,6 +7,7 @@
   <!-- Fonte da Landing Page (Nauka) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/styles.css">
   <link rel="stylesheet" href="assets/css/caderno-erros.css">
@@ -16,26 +17,28 @@
 <body>
   <div id="app"></div>
 
+  <!-- defer em todos os scripts: baixam em paralelo em vez de um esperar o
+       outro terminar, mas continuam executando na mesma ordem de sempre. -->
   <!-- Biblioteca de gráficos (CDN) -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js" defer></script>
   <!-- Back-end: biblioteca do Supabase (CDN) + configuração de conexão -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="assets/js/supabase-config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+  <script src="assets/js/supabase-config.js" defer></script>
   <!-- Base de dados dos cursos (gerada do PDF) -->
-  <script src="assets/js/data.js"></script>
+  <script src="assets/js/data.js" defer></script>
   <!-- Base de dados do Provão Paulista (manual técnico) -->
-  <script src="assets/js/provao-data.js"></script>
+  <script src="assets/js/provao-data.js" defer></script>
   <!-- Regras de cálculo do ITA -->
-  <script src="assets/js/ita-data.js"></script>
+  <script src="assets/js/ita-data.js" defer></script>
   <!-- Cortes de Medicina USP (FUVEST) -->
-  <script src="assets/js/fuvest-medicina-data.js"></script>
+  <script src="assets/js/fuvest-medicina-data.js" defer></script>
   <!-- Caderno de Erros (também usado embutido, via sidebar) -->
-  <script src="assets/js/caderno-erros.js"></script>
+  <script src="assets/js/caderno-erros.js" defer></script>
   <!-- Calendário (também usado embutido, via sidebar) -->
-  <script src="assets/js/calendario.js"></script>
+  <script src="assets/js/calendario.js" defer></script>
   <!-- Lógica da aplicação -->
-  <script src="assets/js/app.js"></script>
+  <script src="assets/js/app.js" defer></script>
   <!-- Chatbot Lili (só aparece após login — controlado em app.js) -->
-  <script src="assets/js/chatbot.js"></script>
+  <script src="assets/js/chatbot.js" defer></script>
 </body>
 </html>

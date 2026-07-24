@@ -20,7 +20,7 @@
   // Cache das provas anexadas: mesma chave "painelId|simId" -> [arquivos].
   let provasCache = {};
   const MAX_FOTOS_SLOT = 8;              // limite de fotos por campo (evita travar)
-  const MAX_BYTES = 15 * 1024 * 1024;    // 15 MB por arquivo
+  const MAX_BYTES = 30 * 1024 * 1024;    // 30 MB por arquivo
 
   // Campos de upload por tipo de vestibular — refletem os cadernos de prova reais.
   const SLOTS = {
@@ -117,7 +117,7 @@
     for (const file of files) {
       const tipo = tipoDoArquivo(file);
       if (!tipo) { toast("Formato não aceito: use PDF ou imagem."); continue; }
-      if (file.size > MAX_BYTES) { toast(`"${file.name}" passa de 15 MB.`); continue; }
+      if (file.size > MAX_BYTES) { toast(`"${file.name}" passa de 30 MB.`); continue; }
       const atuais = getProvasSlot(t.painelId, t.simId, slot);
       if (tipo === "pdf") {
         // Um PDF por campo: remove o(s) anterior(es) antes de subir o novo.
